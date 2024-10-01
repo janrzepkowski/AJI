@@ -1,0 +1,45 @@
+body {
+  background: #75acc4;
+  margin: 0px;
+}
+
+.road {
+  position: absolute;
+  top: 80%;
+  height: 20%;
+  width: 100%;
+  background: #333333;
+}
+
+.left-grass {
+  position: absolute;
+  top: 50%;
+  border-bottom: 30vh solid #567d46;
+  border-right: 100vw solid transparent;
+}
+
+.right-grass {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-bottom: 30vh solid #567d46;
+  border-left: 50vw solid transparent;
+}
+
+.left-mountain {
+  position: absolute;
+  top: 22%;
+  left: 40%;
+  border-left: 25vw solid transparent;
+  border-right: 25vw solid transparent;
+  border-bottom: 50vh solid #3c5b53;
+}
+
+.right-mountain {
+  position: absolute;
+  top: 30%;
+  left: 60%;
+  border-left: 25vw solid transparent;
+  border-right: 25vw solid transparent;
+  border-bottom: 40vh solid #556954;
+}
