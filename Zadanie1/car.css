@@ -1,5 +1,12 @@
+:root {
+  --grass-green: #567d46;
+  --red: #a72241;
+  --blue: #75acc4;
+  --black: #000000;
+}
+
 body {
-  background: #75acc4;
+  background: var(--blue);
   margin: 0px;
 }
 
@@ -14,7 +21,7 @@ body {
 .left-grass {
   position: absolute;
   top: 50%;
-  border-bottom: 30vh solid #567d46;
+  border-bottom: 30vh solid var(--grass-green);
   border-right: 100vw solid transparent;
 }
 
@@ -22,7 +29,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  border-bottom: 30vh solid #567d46;
+  border-bottom: 30vh solid var(--grass-green);
   border-left: 50vw solid transparent;
 }
 
@@ -42,4 +49,58 @@ body {
   border-left: 25vw solid transparent;
   border-right: 25vw solid transparent;
   border-bottom: 40vh solid #556954;
+}
+
+.car-body {
+  position: absolute;
+  top: 70%;
+  left: 40%;
+  height: 10vh;
+  width: 25vw;
+  background: var(--red);
+  border-radius: 50% 75% 20% 25%;
+}
+
+.back-wheel {
+  position: absolute;
+  top: 21%;
+  left: 12%;
+  height: 8.5vh;
+  width: 8.5vh;
+  background: var(--black);
+  border-radius: 50%;
+}
+
+.front-wheel {
+  position: absolute;
+  top: 21%;
+  left: 71%;
+  height: 8.5vh;
+  width: 8.5vh;
+  background: var(--black);
+  border-radius: 50%;
+}
+
+.roof {
+  position: absolute;
+  top: -33%;
+  left: 10%;
+  height: 5vh;
+  width: 17vw;
+  background: var(--red);
+  border-radius: 50% / 100%;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.window {
+  position: absolute;
+  top: -30%;
+  left: 17.5%;
+  height: 4.5vh;
+  width: 15vw;
+  background: #98979d;
+  border-radius: 50% / 100%;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
