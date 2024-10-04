@@ -46,8 +46,8 @@ body {
   position: absolute;
   top: 30%;
   left: 60%;
-  border-left: 25vw solid transparent;
-  border-right: 25vw solid transparent;
+  border-left: 20vw solid transparent;
+  border-right: 20vw solid transparent;
   border-bottom: 40vh solid #556954;
 }
 
@@ -56,14 +56,14 @@ body {
   top: 70%;
   left: 40%;
   height: 10vh;
-  width: 25vw;
+  width: 20vw;
   background: var(--red);
   border-radius: 50% 75% 20% 25%;
 }
 
 .back-wheel {
   position: absolute;
-  top: 21%;
+  top: 30%;
   left: 12%;
   height: 8.5vh;
   width: 8.5vh;
@@ -73,7 +73,7 @@ body {
 
 .front-wheel {
   position: absolute;
-  top: 21%;
+  top: 30%;
   left: 71%;
   height: 8.5vh;
   width: 8.5vh;
@@ -86,7 +86,7 @@ body {
   top: -33%;
   left: 10%;
   height: 5vh;
-  width: 17vw;
+  width: 13.6vw;
   background: var(--red);
   border-radius: 50% / 100%;
   border-bottom-left-radius: 0;
@@ -98,7 +98,7 @@ body {
   top: -30%;
   left: 17.5%;
   height: 4.5vh;
-  width: 15vw;
+  width: 12vw;
   background: #98979d;
   border-radius: 50% / 100%;
   border-bottom-left-radius: 0;
