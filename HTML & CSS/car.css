@@ -51,12 +51,16 @@ body {
   border-bottom: 40vh solid #556954;
 }
 
-.car-body {
+.car-container {
   position: absolute;
   top: 70%;
   left: 40%;
-  height: 10vh;
-  width: 20vw;
+}
+
+.car-body {
+  position: relative;
+  height: 55px;
+  width: 250px;
   background: var(--red);
   border-radius: 50% 75% 20% 25%;
 }
@@ -65,8 +69,8 @@ body {
   position: absolute;
   top: 30%;
   left: 12%;
-  height: 8.5vh;
-  width: 8.5vh;
+  height: 45px;
+  width: 45px;
   background: var(--black);
   border-radius: 50%;
 }
@@ -75,8 +79,8 @@ body {
   position: absolute;
   top: 30%;
   left: 71%;
-  height: 8.5vh;
-  width: 8.5vh;
+  height: 45px;
+  width: 45px;
   background: var(--black);
   border-radius: 50%;
 }
@@ -85,8 +89,8 @@ body {
   position: absolute;
   top: -33%;
   left: 10%;
-  height: 5vh;
-  width: 13.6vw;
+  height: 25px;
+  width: 170px;
   background: var(--red);
   border-radius: 50% / 100%;
   border-bottom-left-radius: 0;
@@ -97,10 +101,18 @@ body {
   position: absolute;
   top: -30%;
   left: 17.5%;
-  height: 4.5vh;
-  width: 12vw;
+  height: 25px;
+  width: 150px;
   background: #98979d;
   border-radius: 50% / 100%;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+}
+
+@media screen and (max-width: 420px), screen and (max-height: 205px) {
+  .car-container {
+    top: 60%;
+    left: 30%;
+    transform: scale(0.5);
+  }
 }
