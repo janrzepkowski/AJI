@@ -1,31 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <link rel="stylesheet" type="text/css" href="theme.css" />
-    <script src="scripts.js"></script>
-    <title>MyTODO App</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/todo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyTodoApp</title>
   </head>
   <body>
-    <h1>MyNotes</h1>
-    <div>
-      <label>Search</label>
-      <input
-        type="text"
-        id="inputSearch"
-        placeholder="Type Your seach here..."
-      />
-    </div>
-    <div id="todoListView"></div>
-    <form>
-      <label>Title</label>
-      <input type="text" id="inputTitle" />
-      <label>Description</label>
-      <input type="text" id="inputDescription" />
-      <label>Place</label>
-      <input type="text" id="inputPlace" />
-      <label>Due date</label>
-      <input type="date" id="inputDate" />
-      <input type="button" value="add" onclick="addTodo()" />
-    </form>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
