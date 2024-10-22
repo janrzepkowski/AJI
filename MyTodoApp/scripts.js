@@ -1,30 +1,36 @@
 "use strict";
-let todoList = []; // declares a new array for Your todo list
+let todoList = [];
 
-let initList = function () {
-  let savedList = window.localStorage.getItem("todos");
-  if (savedList != null) todoList = JSON.parse(savedList);
-  //code creating a default list with 2 items
-  else
-    todoList.push(
-      {
-        title: "Learn JS",
-        description: "Create a demo application for my TODO's",
-        place: "445",
-        category: "",
-        dueDate: new Date(2024, 10, 16),
-      },
-      {
-        title: "Lecture test",
-        description: "Quick test from the first three lectures",
-        place: "F6",
-        category: "",
-        dueDate: new Date(2024, 10, 17),
-      }
-    );
+let getJSONbin = function () {
+  let req = new XMLHttpRequest();
+  req.open(
+    "GET",
+    "https://api.jsonbin.io/v3/b/6717c651ad19ca34f8bcc484/latest",
+    true
+  );
+  req.setRequestHeader(
+    "X-Master-Key",
+    "$2a$10$oTCsN1in9u9Sgxq6r9ZwZO343y3lbu8229JdBHC.HrWXD1SXG2rwS"
+  );
+  req.onreadystatechange = function () {
+    if (req.readyState == 4 && req.status == 200) {
+      todoList = JSON.parse(req.responseText).record;
+      updateTodoList();
+    }
+  };
+  req.send();
 };
 
-initList();
+let updateJSONbin = function () {
+  let req = new XMLHttpRequest();
+  req.open("PUT", "https://api.jsonbin.io/v3/b/6717c651ad19ca34f8bcc484", true);
+  req.setRequestHeader("Content-Type", "application/json");
+  req.setRequestHeader(
+    "X-Master-Key",
+    "$2a$10$oTCsN1in9u9Sgxq6r9ZwZO343y3lbu8229JdBHC.HrWXD1SXG2rwS"
+  );
+  req.send(JSON.stringify(todoList));
+};
 
 let updateTodoList = function () {
   let todoListDiv = document.getElementById("todoListView");
@@ -65,6 +71,8 @@ setInterval(updateTodoList, 1000);
 
 let deleteTodo = function (index) {
   todoList.splice(index, 1);
+  updateJSONbin();
+  updateTodoList();
 };
 
 let addTodo = function () {
@@ -88,6 +96,8 @@ let addTodo = function () {
   };
   // add item to the list
   todoList.push(newTodo);
+  updateJSONbin();
+  updateTodoList();
 };
 
-window.localStorage.setItem("todos", JSON.stringify(todoList));
+getJSONbin();
