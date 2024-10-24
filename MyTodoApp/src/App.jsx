@@ -6,6 +6,8 @@ const BIN_API_KEY = import.meta.env.VITE_BIN_API_KEY;
 const App = () => {
   const [todoList, setTodoList] = useState([]);
   const [filterInput, setFilterInput] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     getJSONbin();
@@ -69,12 +71,19 @@ const App = () => {
     updateJSONbin(updatedList);
   };
 
-  const filteredTodoList = todoList?.filter(
-    (todo) =>
-      filterInput === "" ||
-      todo.title.toLowerCase().includes(filterInput.toLowerCase()) ||
-      todo.description.toLowerCase().includes(filterInput.toLowerCase())
-  );
+  const filteredTodoList = todoList?.filter((todo) => {
+    const todoDate = new Date(todo.dueDate);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    return (
+      (filterInput === "" ||
+        todo.title.toLowerCase().includes(filterInput.toLowerCase()) ||
+        todo.description.toLowerCase().includes(filterInput.toLowerCase())) &&
+      (!start || todoDate >= start) &&
+      (!end || todoDate <= end)
+    );
+  });
 
   return (
     <div className="container mt-5">
@@ -129,6 +138,30 @@ const App = () => {
             value={filterInput}
             onChange={(e) => setFilterInput(e.target.value)}
           />
+          <div className="mb-3">
+            <label htmlFor="startDate" className="form-label">
+              Start Date
+            </label>
+            <input
+              id="startDate"
+              className="form-control"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="endDate" className="form-label">
+              End Date
+            </label>
+            <input
+              id="endDate"
+              className="form-control"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
           <table className="table table-hover">
             <thead>
               <tr>
