@@ -77,45 +77,89 @@ const App = () => {
   );
 
   return (
-    <div>
-      <h1>My Todo App</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Place</th>
-            <th>Due Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTodoList?.map((todo, index) => (
-            <tr key={index}>
-              <td>{todo.title}</td>
-              <td>{todo.description}</td>
-              <td>{todo.place}</td>
-              <td>{new Date(todo.dueDate).toLocaleDateString()}</td>
-              <td>
-                <button onClick={() => deleteTodo(index)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <form onSubmit={addTodo}>
-        <input id="inputTitle" placeholder="Title" required />
-        <input id="inputDescription" placeholder="Description" required />
-        <input id="inputPlace" placeholder="Place" required />
-        <input id="inputDate" type="date" required />
-        <button type="submit">Add Todo</button>
-      </form>
-      <input
-        id="inputSearch"
-        placeholder="Search"
-        value={filterInput}
-        onChange={(e) => setFilterInput(e.target.value)}
-      />
+    <div className="container mt-5">
+      <h1 className="mb-4 text-center">My Todo App</h1>
+      <div className="card mb-4">
+        <div className="card-body">
+          <form onSubmit={addTodo}>
+            <div className="mb-3">
+              <input
+                id="inputTitle"
+                className="form-control"
+                placeholder="Title"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                id="inputDescription"
+                className="form-control"
+                placeholder="Description"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                id="inputPlace"
+                className="form-control"
+                placeholder="Place"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                id="inputDate"
+                className="form-control"
+                type="date"
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-primary w-100">
+              Add Todo
+            </button>
+          </form>
+        </div>
+      </div>
+      <div className="card mb-4">
+        <div className="card-body">
+          <input
+            id="inputSearch"
+            className="form-control mb-3"
+            placeholder="Search"
+            value={filterInput}
+            onChange={(e) => setFilterInput(e.target.value)}
+          />
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Place</th>
+                <th>Due Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTodoList?.map((todo, index) => (
+                <tr key={index}>
+                  <td>{todo.title}</td>
+                  <td>{todo.description}</td>
+                  <td>{todo.place}</td>
+                  <td>{new Date(todo.dueDate).toLocaleDateString()}</td>
+                  <td>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => deleteTodo(index)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
