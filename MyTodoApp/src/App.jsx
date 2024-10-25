@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import Groq from "groq-sdk";
 
 const BIN_ID = import.meta.env.VITE_BIN_ID;
 const BIN_API_KEY = import.meta.env.VITE_BIN_API_KEY;
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+
+const groq = new Groq({ apiKey: GROQ_API_KEY, dangerouslyAllowBrowser: true });
 
 const App = () => {
   const [todoList, setTodoList] = useState([]);
@@ -57,18 +61,45 @@ const App = () => {
     updateJSONbin(updatedList);
   };
 
-  const addTodo = (e) => {
+  const addTodo = async (e) => {
     e.preventDefault();
     const newTodo = {
       title: e.target.inputTitle.value,
       description: e.target.inputDescription.value,
       place: e.target.inputPlace.value,
-      category: "",
       dueDate: new Date(e.target.inputDate.value).toISOString(),
     };
-    const updatedList = [...todoList, newTodo];
-    setTodoList(updatedList);
-    updateJSONbin(updatedList);
+
+    try {
+      const category = await getCategory(newTodo.title, newTodo.description);
+      newTodo.category = category;
+
+      const updatedList = [...todoList, newTodo];
+      setTodoList(updatedList);
+      updateJSONbin(updatedList);
+    } catch (error) {
+      console.error("Error categorizing task:", error);
+    }
+  };
+
+  const getCategory = async (title, description) => {
+    const response = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `You are personal manager. Please categorize the following task based on its title and description, assign the task to one of the following categories:
+                    Work, Friends & Family, Home, Shopping, Health, Finance, Education, Entertainment, Goals & Personal Growth, Other.
+                    In response, type only the category name.`,
+        },
+        {
+          role: "user",
+          content: `Title: ${title}\nDescription: ${description}`,
+        },
+      ],
+      model: "llama3-8b-8192",
+    });
+
+    return response.choices[0]?.message?.content || "Uncategorized";
   };
 
   const filteredTodoList = todoList?.filter((todo) => {
@@ -169,6 +200,7 @@ const App = () => {
                 <th>Description</th>
                 <th>Place</th>
                 <th>Due Date</th>
+                <th>Category</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -179,6 +211,7 @@ const App = () => {
                   <td>{todo.description}</td>
                   <td>{todo.place}</td>
                   <td>{new Date(todo.dueDate).toLocaleDateString()}</td>
+                  <td>{todo.category}</td>
                   <td>
                     <button
                       className="btn btn-danger btn-sm"
