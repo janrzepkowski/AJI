@@ -6,7 +6,7 @@ require("dotenv").config();
 const Product = require("./models/product");
 const Category = require("./models/category");
 const Order = require("./models/order");
-const OrderStatus = require("./models/orderStatus");
+const Status = require("./models/status");
 
 const app = express();
 
@@ -91,10 +91,32 @@ app.get("/api/categories", (req, res) => {
 });
 
 // Orders
+app.get("/api/orders", (req, res) => {
+  Order.find({})
+    .populate("order_status_id")
+    .populate("products.product_id")
+    .then((orders) => {
+      res.json(orders);
+    });
+});
+
+app.get("/api/orders/:id", (req, res, next) => {
+  Order.findById(req.params.id)
+    .populate("order_status_id")
+    .populate("products.product_id")
+    .then((order) => {
+      if (order) {
+        res.json(order);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
+});
 
 // Order statuses
-app.get("/api/orderstatuses", (req, res) => {
-  OrderStatus.find({}).then((statuses) => {
+app.get("/api/status", (req, res) => {
+  Status.find({}).then((statuses) => {
     res.json(statuses);
   });
 });
