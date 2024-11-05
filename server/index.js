@@ -82,6 +82,12 @@ app.delete("/api/products/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
+app.get("/api/categories", (req, res) => {
+  Category.find({}).then((categories) => {
+    res.json(categories);
+  });
+});
+
 const errorHandler = (error, req, res, next) => {
   console.error(error.message);
 
