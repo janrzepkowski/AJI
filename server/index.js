@@ -26,7 +26,7 @@ app.get("/api/products/:id", (req, res, next) => {
       if (product) {
         res.json(product);
       } else {
-        res.status(StatusCodes.NOT_FOUND).end();
+        res.status(StatusCodes.NOT_FOUND).json({ error: "Product not found" });
       }
     })
     .catch((error) => next(error));
@@ -46,9 +46,15 @@ app.post("/api/products", (req, res, next) => {
   product
     .save()
     .then((savedProduct) => {
-      res.json(savedProduct);
+      res.status(StatusCodes.CREATED).json(savedProduct);
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      if (error.name === "ValidationError") {
+        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+      } else {
+        next(error);
+      }
+    });
 });
 
 app.put("/api/products/:id", (req, res, next) => {
@@ -65,10 +71,16 @@ app.put("/api/products/:id", (req, res, next) => {
       if (updatedProduct) {
         res.json(updatedProduct);
       } else {
-        res.status(StatusCodes.NOT_FOUND).end();
+        res.status(StatusCodes.NOT_FOUND).json({ error: "Product not found" });
       }
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      if (error.name === "ValidationError") {
+        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+      } else {
+        next(error);
+      }
+    });
 });
 
 app.delete("/api/products/:id", (req, res, next) => {
@@ -77,7 +89,7 @@ app.delete("/api/products/:id", (req, res, next) => {
       if (result) {
         res.status(StatusCodes.NO_CONTENT).end();
       } else {
-        res.status(StatusCodes.NOT_FOUND).end();
+        res.status(StatusCodes.NOT_FOUND).json({ error: "Product not found" });
       }
     })
     .catch((error) => next(error));

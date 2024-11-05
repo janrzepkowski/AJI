@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String },
-  unit_price: { type: Number, required: true },
-  unit_weight: { type: Number, required: true },
+  name: { type: String, required: true, minlength: 1 },
+  description: { type: String, required: true, minlength: 1 },
+  unit_price: { type: Number, required: true, min: 0.01 },
+  unit_weight: { type: Number, required: true, min: 0.01 },
   category_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
