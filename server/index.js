@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("./db");
-require("dotenv").config();
+const { StatusCodes } = require("http-status-codes");
 
 const Product = require("./models/product");
 const Category = require("./models/category");
@@ -26,7 +26,7 @@ app.get("/api/products/:id", (req, res, next) => {
       if (product) {
         res.json(product);
       } else {
-        res.status(404).end();
+        res.status(StatusCodes.NOT_FOUND).end();
       }
     })
     .catch((error) => next(error));
@@ -65,7 +65,7 @@ app.put("/api/products/:id", (req, res, next) => {
       if (updatedProduct) {
         res.json(updatedProduct);
       } else {
-        res.status(404).end();
+        res.status(StatusCodes.NOT_FOUND).end();
       }
     })
     .catch((error) => next(error));
@@ -75,9 +75,9 @@ app.delete("/api/products/:id", (req, res, next) => {
   Product.findByIdAndDelete(req.params.id)
     .then((result) => {
       if (result) {
-        res.status(204).end();
+        res.status(StatusCodes.NO_CONTENT).end();
       } else {
-        res.status(404).end();
+        res.status(StatusCodes.NOT_FOUND).end();
       }
     })
     .catch((error) => next(error));
@@ -108,7 +108,7 @@ app.get("/api/orders/:id", (req, res, next) => {
       if (order) {
         res.json(order);
       } else {
-        res.status(404).end();
+        res.status(StatusCodes.NOT_FOUND).end();
       }
     })
     .catch((error) => next(error));
@@ -154,7 +154,7 @@ app.patch("/api/orders/:id", (req, res, next) => {
   })
     .then((updatedOrder) => {
       if (!updatedOrder) {
-        return res.status(404).end();
+        return res.status(StatusCodes.NOT_FOUND).end();
       }
       res.json(updatedOrder);
     })
@@ -172,7 +172,9 @@ const errorHandler = (error, req, res, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
-    return res.status(400).send({ error: "malformatted id" });
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .send({ error: "malformatted id" });
   }
 
   next(error);
