@@ -13,6 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Products
 app.get("/api/products", (req, res) => {
   Product.find({}).then((products) => {
     res.json(products);
@@ -82,9 +83,19 @@ app.delete("/api/products/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
+// Categories
 app.get("/api/categories", (req, res) => {
   Category.find({}).then((categories) => {
     res.json(categories);
+  });
+});
+
+// Orders
+
+// Order statuses
+app.get("/api/orderstatuses", (req, res) => {
+  OrderStatus.find({}).then((statuses) => {
+    res.json(statuses);
   });
 });
 
