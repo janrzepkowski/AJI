@@ -12,4 +12,26 @@ orderStatusSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("OrderStatus", orderStatusSchema);
+const OrderStatus = mongoose.model("OrderStatus", orderStatusSchema);
+
+const predefinedOrderStatuses = [
+  "PENDING",
+  "CONFIRMED",
+  "CANCELLED",
+  "COMPLETED",
+];
+
+const initializeOrderStatuses = async () => {
+  const count = await OrderStatus.countDocuments();
+  if (count === 0) {
+    for (const statusName of predefinedOrderStatuses) {
+      const status = new OrderStatus({ name: statusName });
+      await status.save();
+    }
+    console.log("Predefined order statuses initialized.");
+  }
+};
+
+initializeOrderStatuses();
+
+module.exports = OrderStatus;
