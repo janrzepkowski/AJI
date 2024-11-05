@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-const categorySchema = new mongoose.Schema({
+const orderStatusSchema = new mongoose.Schema({
   name: { type: String, required: true },
 });
 
-categorySchema.set("toJSON", {
+orderStatusSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -12,4 +12,4 @@ categorySchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Category", categorySchema);
+module.exports = mongoose.model("OrderStatus", orderStatusSchema);
