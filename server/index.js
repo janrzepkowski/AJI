@@ -93,7 +93,7 @@ app.get("/api/categories", (req, res) => {
 // Orders
 app.get("/api/orders", (req, res) => {
   Order.find({})
-    .populate("order_status_id")
+    .populate("status_id")
     .populate("products.product_id")
     .then((orders) => {
       res.json(orders);
@@ -102,7 +102,7 @@ app.get("/api/orders", (req, res) => {
 
 app.get("/api/orders/:id", (req, res, next) => {
   Order.findById(req.params.id)
-    .populate("order_status_id")
+    .populate("status_id")
     .populate("products.product_id")
     .then((order) => {
       if (order) {
@@ -110,6 +110,53 @@ app.get("/api/orders/:id", (req, res, next) => {
       } else {
         res.status(404).end();
       }
+    })
+    .catch((error) => next(error));
+});
+
+app.get("/api/orders/status/:id", (req, res, next) => {
+  Order.find({ status_id: req.params.id })
+    .populate("status_id")
+    .populate("products.product_id")
+    .then((orders) => {
+      res.json(orders);
+    })
+    .catch((error) => next(error));
+});
+
+app.post("/api/orders", (req, res, next) => {
+  const body = req.body;
+
+  const order = new Order({
+    confirmation_date: new Date(),
+    status_id: body.status_id,
+    user_name: body.user_name,
+    email: body.email,
+    phone_number: body.phone_number,
+    products: body.products,
+  });
+
+  order
+    .save()
+    .then((savedOrder) => {
+      res.json(savedOrder);
+    })
+    .catch((error) => next(error));
+});
+
+app.patch("/api/orders/:id", (req, res, next) => {
+  const updates = req.body;
+
+  Order.findByIdAndUpdate(req.params.id, updates, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
+    .then((updatedOrder) => {
+      if (!updatedOrder) {
+        return res.status(404).end();
+      }
+      res.json(updatedOrder);
     })
     .catch((error) => next(error));
 });

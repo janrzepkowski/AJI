@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   confirmation_date: { type: Date, default: null },
-  order_status_id: {
+  status_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "OrderStatus",
+    ref: "Status",
     required: true,
   },
   user_name: { type: String, required: true },
