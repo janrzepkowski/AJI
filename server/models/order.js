@@ -7,9 +7,29 @@ const orderSchema = new mongoose.Schema({
     ref: "Status",
     required: true,
   },
-  user_name: { type: String, required: true },
-  email: { type: String, required: true },
-  phone_number: { type: String, required: true },
+  user_name: { type: String, required: true, minlength: 1 },
+  email: {
+    type: String,
+    required: true,
+    minlength: 1,
+    validate: {
+      validator: function (v) {
+        return /\S+@\S+\.\S+/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid email!`,
+    },
+  },
+  phone_number: {
+    type: String,
+    required: true,
+    minlength: 1,
+    validate: {
+      validator: function (v) {
+        return /^\d+$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
+  },
   products: [
     {
       product_id: {

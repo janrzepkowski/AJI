@@ -120,7 +120,7 @@ app.get("/api/orders/:id", (req, res, next) => {
       if (order) {
         res.json(order);
       } else {
-        res.status(StatusCodes.NOT_FOUND).end();
+        res.status(StatusCodes.NOT_FOUND).json({ error: "Order not found" });
       }
     })
     .catch((error) => next(error));
@@ -151,9 +151,15 @@ app.post("/api/orders", (req, res, next) => {
   order
     .save()
     .then((savedOrder) => {
-      res.json(savedOrder);
+      res.status(StatusCodes.CREATED).json(savedOrder);
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      if (error.name === "ValidationError") {
+        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+      } else {
+        next(error);
+      }
+    });
 });
 
 app.patch("/api/orders/:id", (req, res, next) => {
@@ -166,7 +172,9 @@ app.patch("/api/orders/:id", (req, res, next) => {
   })
     .then((updatedOrder) => {
       if (!updatedOrder) {
-        return res.status(StatusCodes.NOT_FOUND).end();
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ error: "Order not found" });
       }
       res.json(updatedOrder);
     })
