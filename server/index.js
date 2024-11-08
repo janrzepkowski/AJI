@@ -136,47 +136,66 @@ app.get("/api/orders/status/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/orders", (req, res, next) => {
-  const body = req.body;
+app.post("/api/orders", async (req, res, next) => {
+  const { status_id, user_name, email, phone_number, products } = req.body;
 
-  const order = new Order({
-    confirmation_date: new Date(),
-    status_id: body.status_id,
-    user_name: body.user_name,
-    email: body.email,
-    phone_number: body.phone_number,
-    products: body.products,
-  });
+  try {
+    const productIds = products.map((p) => p.product_id);
+    const existingProducts = await Product.find({ _id: { $in: productIds } });
 
-  order
-    .save()
-    .then((savedOrder) => {
-      res.status(StatusCodes.CREATED).json(savedOrder);
-    })
-    .catch((error) => {
-      if (error.name === "ValidationError") {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-      } else {
-        next(error);
-      }
+    if (existingProducts.length !== productIds.length) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "One or more products do not exist" });
+    }
+
+    const order = new Order({
+      confirmation_date: new Date(),
+      status_id,
+      user_name,
+      email,
+      phone_number,
+      products,
     });
+
+    const savedOrder = await order.save();
+    res.status(StatusCodes.CREATED).json(savedOrder);
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    } else {
+      next(error);
+    }
+  }
 });
 
 app.patch("/api/orders/:id", (req, res, next) => {
   const updates = req.body;
 
-  Order.findByIdAndUpdate(req.params.id, updates, {
-    new: true,
-    runValidators: true,
-    context: "query",
-  })
-    .then((updatedOrder) => {
-      if (!updatedOrder) {
+  Order.findById(req.params.id)
+    .populate("status_id")
+    .then((order) => {
+      if (!order) {
         return res
           .status(StatusCodes.NOT_FOUND)
           .json({ error: "Order not found" });
       }
-      res.json(updatedOrder);
+
+      if (order.status_id.name === "CANCELLED") {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ error: "Cannot update a cancelled order" });
+      }
+
+      Order.findByIdAndUpdate(req.params.id, updates, {
+        new: true,
+        runValidators: true,
+        context: "query",
+      })
+        .then((updatedOrder) => {
+          res.json(updatedOrder);
+        })
+        .catch((error) => next(error));
     })
     .catch((error) => next(error));
 });
