@@ -13,6 +13,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const statusOrder = {
+  PENDING: 1,
+  CONFIRMED: 2,
+  COMPLETED: 3,
+  CANCELLED: 4,
+};
+
 // Products
 app.get("/api/products", (req, res) => {
   Product.find({}).then((products) => {
@@ -169,35 +176,49 @@ app.post("/api/orders", async (req, res, next) => {
   }
 });
 
-app.patch("/api/orders/:id", (req, res, next) => {
+app.patch("/api/orders/:id", async (req, res, next) => {
   const updates = req.body;
 
-  Order.findById(req.params.id)
-    .populate("status_id")
-    .then((order) => {
-      if (!order) {
-        return res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ error: "Order not found" });
-      }
+  try {
+    const order = await Order.findById(req.params.id).populate("status_id");
 
-      if (order.status_id.name === "CANCELLED") {
+    if (!order) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Order not found" });
+    }
+
+    if (order.status_id.name === "CANCELLED") {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Cannot update a cancelled order" });
+    }
+
+    if (updates.status_id) {
+      const newStatus = await Status.findById(updates.status_id);
+      if (!newStatus) {
         return res
           .status(StatusCodes.BAD_REQUEST)
-          .json({ error: "Cannot update a cancelled order" });
+          .json({ error: "Invalid status" });
       }
 
-      Order.findByIdAndUpdate(req.params.id, updates, {
-        new: true,
-        runValidators: true,
-        context: "query",
-      })
-        .then((updatedOrder) => {
-          res.json(updatedOrder);
-        })
-        .catch((error) => next(error));
-    })
-    .catch((error) => next(error));
+      if (statusOrder[newStatus.name] < statusOrder[order.status_id.name]) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ error: "Cannot change status backwards" });
+      }
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+      context: "query",
+    });
+
+    res.json(updatedOrder);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Order statuses
