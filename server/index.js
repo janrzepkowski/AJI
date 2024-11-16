@@ -2,11 +2,17 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("./db");
 const { StatusCodes } = require("http-status-codes");
+const Groq = require("groq-sdk");
+const axios = require("axios");
 
 const Product = require("./models/product");
 const Category = require("./models/category");
 const Order = require("./models/order");
 const Status = require("./models/status");
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
 
 const app = express();
 
@@ -37,6 +43,38 @@ app.get("/api/products/:id", (req, res, next) => {
       }
     })
     .catch((error) => next(error));
+});
+
+app.get("/api/products/:id/seo-description", async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Product not found" });
+    }
+
+    const response = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `You are an SEO expert. Generate an SEO-friendly description for the following product: ${product.name}, ${product.description}, priced at ${product.unit_price}.`,
+        },
+        {
+          role: "user",
+          content: `Product Name: ${product.name}\nDescription: ${product.description}\nPrice: ${product.unit_price}`,
+        },
+      ],
+      model: "llama3-8b-8192",
+    });
+
+    const seoDescription =
+      response.choices[0]?.message?.content || "No description available";
+
+    res.send(`<html><body>${seoDescription}</body></html>`);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.post("/api/products", (req, res, next) => {
