@@ -2,17 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("./db");
 const { StatusCodes } = require("http-status-codes");
-const Groq = require("groq-sdk");
 const axios = require("axios");
 
 const Product = require("./models/product");
 const Category = require("./models/category");
 const Order = require("./models/order");
 const Status = require("./models/status");
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
 
 const app = express();
 
@@ -54,7 +49,7 @@ app.get("/api/products/:id/seo-description", async (req, res, next) => {
         .json({ error: "Product not found" });
     }
 
-    const response = await groq.chat.completions.create({
+    const data = {
       messages: [
         {
           role: "system",
@@ -67,10 +62,21 @@ app.get("/api/products/:id/seo-description", async (req, res, next) => {
         },
       ],
       model: "llama3-8b-8192",
-    });
+    };
+
+    const response = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        },
+      }
+    );
 
     const seoDescription =
-      response.choices[0]?.message?.content || "No description available";
+      response.data.choices[0]?.message?.content || "No description available";
 
     res.send(`<html><body>${seoDescription}</body></html>`);
   } catch (error) {
