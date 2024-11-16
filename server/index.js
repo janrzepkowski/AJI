@@ -58,7 +58,8 @@ app.get("/api/products/:id/seo-description", async (req, res, next) => {
       messages: [
         {
           role: "system",
-          content: `You are an SEO expert. Generate an SEO-friendly description for the following product: ${product.name}, ${product.description}, priced at ${product.unit_price}.`,
+          content: `You are an SEO expert. Generate an SEO-friendly description for the following product: ${product.name}, ${product.description}, priced at ${product.unit_price}.
+                    In response, type only the SEO description without any quotation marks.`,
         },
         {
           role: "user",
