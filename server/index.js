@@ -10,10 +10,14 @@ const Order = require("./models/order");
 const Status = require("./models/status");
 const User = require("./models/user");
 
+const authRouter = require("./routes/auth");
+const verifyToken = require("./middleware/authMiddleware");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/api", authRouter);
 
 const statusOrder = {
   PENDING: 1,
@@ -272,49 +276,6 @@ app.get("/api/status", (req, res) => {
   Status.find({}).then((statuses) => {
     res.json(statuses);
   });
-});
-
-// Users
-app.post("/api/signup", async (req, res) => {
-  try {
-    const { username, password, role } = req.body;
-
-    const user = new User({ username, password, role });
-    await user.save();
-    const token = user.generateJWT();
-
-    res.json({ token, username });
-  } catch (error) {
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
-  }
-});
-
-app.post("/api/login", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ error: "Invalid username" });
-    }
-
-    const passwordCorrect = await user.comparePassword(password);
-    if (!passwordCorrect) {
-      return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ error: "Invalid password" });
-    }
-
-    const token = user.generateJWT();
-    res.json({ token, username });
-  } catch (error) {
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
-  }
 });
 
 const errorHandler = (error, req, res, next) => {
