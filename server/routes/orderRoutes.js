@@ -4,6 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 const Order = require("../models/order");
 const Product = require("../models/product");
 const Status = require("../models/status");
+const { verifyToken } = require("../middleware/authMiddleware");
 
 const statusOrder = {
   PENDING: 1,
@@ -12,7 +13,7 @@ const statusOrder = {
   CANCELLED: 4,
 };
 
-router.get("/", (req, res) => {
+router.get("/", verifyToken, (req, res) => {
   Order.find({})
     .populate("status_id")
     .populate("products.product_id")
@@ -21,7 +22,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res, next) => {
+router.get("/:id", verifyToken, (req, res, next) => {
   Order.findById(req.params.id)
     .populate("status_id")
     .populate("products.product_id")
@@ -35,7 +36,7 @@ router.get("/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-router.get("/status/:id", (req, res, next) => {
+router.get("/status/:id", verifyToken, (req, res, next) => {
   Order.find({ status_id: req.params.id })
     .populate("status_id")
     .populate("products.product_id")
@@ -45,7 +46,7 @@ router.get("/status/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", verifyToken, async (req, res, next) => {
   const { status_id, user_name, email, phone_number, products } = req.body;
 
   try {
@@ -78,7 +79,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.patch("/:id", async (req, res, next) => {
+router.patch("/:id", verifyToken, async (req, res, next) => {
   const updates = req.body;
 
   try {
