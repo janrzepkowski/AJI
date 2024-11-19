@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
 
-const User = require("./../models/user");
+const User = require("../models/user");
 
 router.post("/signup", async (req, res) => {
   try {
