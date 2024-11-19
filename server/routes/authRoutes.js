@@ -35,18 +35,14 @@ router.post("/login", async (req, res) => {
         .json({ error: "Invalid password" });
     }
     const accessToken = jwt.sign(
-      { username, id: user._id },
+      { username: user.username, id: user._id, role: user.role },
       process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: "1h",
-      }
+      { expiresIn: "1h" }
     );
     const refreshToken = jwt.sign(
-      { username, id: user._id },
+      { username: user.username, id: user._id, role: user.role },
       process.env.REFRESH_TOKEN_SECRET,
-      {
-        expiresIn: "1d",
-      }
+      { expiresIn: "1d" }
     );
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
@@ -75,7 +71,7 @@ router.post("/refresh-token", (req, res) => {
           const accessToken = jwt.sign(
             { username: decoded.username, id: decoded.id },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "10m" }
+            { expiresIn: "1h" }
           );
           return res.json({ accessToken });
         }

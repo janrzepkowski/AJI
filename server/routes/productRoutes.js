@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { StatusCodes } = require("http-status-codes");
 const Product = require("../models/product");
+const {
+  verifyToken,
+  verifyEmployeeRole,
+} = require("../middleware/authMiddleware");
 
 router.get("/", (req, res) => {
   Product.find({}).then((products) => {
@@ -65,7 +69,7 @@ router.get("/:id/seo-description", async (req, res, next) => {
   }
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", verifyToken, verifyEmployeeRole, (req, res, next) => {
   const body = req.body;
 
   const product = new Product({
@@ -90,7 +94,7 @@ router.post("/", (req, res, next) => {
     });
 });
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", verifyToken, verifyEmployeeRole, (req, res, next) => {
   const { name, description, unit_price, unit_weight, category_id } = req.body;
 
   const product = { name, description, unit_price, unit_weight, category_id };
@@ -116,7 +120,7 @@ router.put("/:id", (req, res, next) => {
     });
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", verifyToken, verifyEmployeeRole, (req, res, next) => {
   Product.findByIdAndDelete(req.params.id)
     .then((result) => {
       if (result) {
