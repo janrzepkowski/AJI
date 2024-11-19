@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cookieparser = require("cookie-parser");
 const { StatusCodes } = require("http-status-codes");
 
 const User = require("../models/user");
@@ -33,12 +34,57 @@ router.post("/login", async (req, res) => {
         .status(StatusCodes.UNAUTHORIZED)
         .json({ error: "Invalid password" });
     }
-    const token = jwt.sign({ username, id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+    const accessToken = jwt.sign(
+      { username, id: user._id },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+    const refreshToken = jwt.sign(
+      { username, id: user._id },
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
     });
-    res.status(StatusCodes.OK).json({ token });
+    res.status(StatusCodes.OK).json({ accessToken });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  }
+});
+
+router.post("/refresh-token", (req, res) => {
+  if (req.cookies?.jwt) {
+    const refreshToken = req.cookies.jwt;
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, decoded) => {
+        if (err) {
+          return res
+            .status(StatusCodes.UNAUTHORIZED)
+            .json({ message: "Unauthorized" });
+        } else {
+          const accessToken = jwt.sign(
+            { username: decoded.username, id: decoded.id },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: "10m" }
+          );
+          return res.json({ accessToken });
+        }
+      }
+    );
+  } else {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ message: "Unauthorized" });
   }
 });
 

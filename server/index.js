@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const cookieparser = require("cookie-parser");
 require("dotenv").config();
 const { StatusCodes } = require("http-status-codes");
 
@@ -29,6 +30,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieparser());
 app.use("/api", authRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);

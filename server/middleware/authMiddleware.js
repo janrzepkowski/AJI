@@ -8,7 +8,7 @@ function verifyToken(req, res, next) {
       .status(StatusCodes.UNAUTHORIZED)
       .json({ error: "Access denied" });
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.id = decoded._id;
     next();
   } catch (error) {
