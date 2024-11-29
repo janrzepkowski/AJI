@@ -1,0 +1,23 @@
+[
+    {
+      "name": "Bianchi Impulso Allroad GRX600",
+      "description": "The Bianchi Impulso is the most popular aluminum racer in the Bianchi …",
+      "unit_price": 8669.99,
+      "unit_weight": 8.9,
+      "category_id": "672a2b9ac65e63477cb2a8f6"
+    },
+    {
+      "name": "White tee",
+      "description": "100% cotton, comfortable fit",
+      "unit_price": 9.99,
+      "unit_weight": 0.2,
+      "category_id": "672a2b9ac65e63477cb2a900"
+    },
+    {
+      "name": "Test Product",
+      "description": "This is a test product",
+      "unit_price": 100,
+      "unit_weight": 1,
+      "category_id": "672a2b99c65e63477cb2a8f4"
+    }
+  ]
