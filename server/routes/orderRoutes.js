@@ -124,4 +124,47 @@ router.patch("/:id", verifyToken, async (req, res, next) => {
   }
 });
 
+router.post("/:id/opinions", verifyToken, async (req, res, next) => {
+  const { id } = req.params;
+  const { rating, content } = req.body;
+
+  if (!rating || !content) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: "Rating and content are required" });
+  }
+
+  try {
+    const order = await Order.findById(id).populate("status_id");
+
+    if (!order) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Order not found" });
+    }
+
+    if (order.user_name !== req.user.username) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: "Access denied" });
+    }
+
+    if (
+      order.status_id.name !== "COMPLETED" &&
+      order.status_id.name !== "CANCELLED"
+    ) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Opinions can only be added to completed or cancelled orders",
+      });
+    }
+
+    order.opinions.push({ rating, content });
+    await order.save();
+
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Opinion added successfully" });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
