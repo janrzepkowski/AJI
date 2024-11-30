@@ -1,5 +1,22 @@
 const mongoose = require("mongoose");
 
+const opinionSchema = new mongoose.Schema({
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5,
+    validate: {
+      validator: Number.isInteger,
+      message: "Rating must be an integer",
+    },
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+});
+
 const orderSchema = new mongoose.Schema({
   confirmation_date: { type: Date, default: null },
   status_id: {
@@ -48,6 +65,7 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
+  opinions: [opinionSchema],
 });
 
 orderSchema.set("toJSON", {
