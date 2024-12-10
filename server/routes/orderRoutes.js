@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { StatusCodes } = require("http-status-codes");
+const jsonpatch = require("fast-json-patch");
 const Order = require("../models/order");
 const Product = require("../models/product");
 const Status = require("../models/status");
@@ -14,7 +15,7 @@ const statusOrder = {
 };
 
 router.get("/", verifyToken, (req, res) => {
-  Order.find({})
+  Order.find({ user_name: req.user.username })
     .populate("status_id")
     .populate("products.product_id")
     .then((orders) => {
@@ -80,7 +81,7 @@ router.post("/", verifyToken, async (req, res, next) => {
 });
 
 router.patch("/:id", verifyToken, async (req, res, next) => {
-  const updates = req.body;
+  const patch = req.body;
 
   try {
     const order = await Order.findById(req.params.id).populate("status_id");
@@ -97,8 +98,13 @@ router.patch("/:id", verifyToken, async (req, res, next) => {
         .json({ error: "Cannot update a cancelled order" });
     }
 
-    if (updates.status_id) {
-      const newStatus = await Status.findById(updates.status_id);
+    const updatedOrder = jsonpatch.applyPatch(
+      order.toObject(),
+      patch
+    ).newDocument;
+
+    if (updatedOrder.status_id) {
+      const newStatus = await Status.findById(updatedOrder.status_id);
       if (!newStatus) {
         return res
           .status(StatusCodes.BAD_REQUEST)
@@ -112,7 +118,7 @@ router.patch("/:id", verifyToken, async (req, res, next) => {
       }
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(req.params.id, updates, {
+    await Order.findByIdAndUpdate(req.params.id, updatedOrder, {
       new: true,
       runValidators: true,
       context: "query",
