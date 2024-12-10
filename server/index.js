@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieparser = require("cookie-parser");
-const fs = require("fs");
 require("dotenv").config();
 const { StatusCodes } = require("http-status-codes");
 
@@ -63,7 +62,7 @@ app.post("/api/init", verifyToken, async (req, res) => {
         .json({ error: "Database already initialized with products" });
     }
 
-    const data = JSON.parse(fs.readFileSync("./data/productsData.json", "utf-8"));
+    const data = req.body;
 
     await Product.insertMany(data);
     res.status(StatusCodes.OK).json({ message: "Data successfully imported" });
