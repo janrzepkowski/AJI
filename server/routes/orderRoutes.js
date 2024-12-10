@@ -48,7 +48,7 @@ router.get("/status/:id", verifyToken, (req, res, next) => {
 });
 
 router.post("/", verifyToken, async (req, res, next) => {
-  const { status_id, user_name, email, phone_number, products } = req.body;
+  const { user_name, email, phone_number, products } = req.body;
 
   try {
     const productIds = products.map((p) => p.product_id);
@@ -60,9 +60,11 @@ router.post("/", verifyToken, async (req, res, next) => {
         .json({ error: "One or more products do not exist" });
     }
 
+    const pendingStatus = await Status.findOne({ name: "PENDING" });
+
     const order = new Order({
       confirmation_date: new Date(),
-      status_id,
+      status_id: pendingStatus._id,
       user_name,
       email,
       phone_number,
