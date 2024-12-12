@@ -1,12 +1,14 @@
-import { useState } from "react";
 import "./App.css";
+import { Outlet } from "react-router";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <h1>Bike Nation</h1>
+      <nav>navbar</nav>
+      <main className="min-h-screen">
+        <Outlet />
+      </main>
+      <footer>footer</footer>
     </>
   );
 }
