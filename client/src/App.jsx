@@ -1,16 +1,38 @@
-import "./App.css";
-import { Outlet } from "react-router";
+import {
+  Hero,
+  PopularProducts,
+  SuperQuality,
+  Services,
+  SpecialOffer,
+  CustomerReviews,
+  Footer,
+} from "./sections";
 
-function App() {
-  return (
-    <>
-      <nav>navbar</nav>
-      <main className="min-h-screen">
-        <Outlet />
-      </main>
-      <footer>footer</footer>
-    </>
-  );
-}
+const App = () => (
+  <main className="relative">
+    <nav>Nav</nav>
+    <section className="xl-padding-1 wide:padding-r padding-b">
+      <Hero />
+    </section>
+    <section className="padding">
+      <PopularProducts />
+    </section>
+    <section className="padding">
+      <SuperQuality />
+    </section>
+    <section className="padding-x py-10">
+      <Services />
+    </section>
+    <section className="padding">
+      <SpecialOffer />
+    </section>
+    <section className="bg-pale-blue padding">
+      <CustomerReviews />
+    </section>
+    <section className="bg-black padding-x padding-t pb-8">
+      <Footer />
+    </section>
+  </main>
+);
 
 export default App;
