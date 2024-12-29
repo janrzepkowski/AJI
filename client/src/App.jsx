@@ -2,6 +2,7 @@ import Nav from "./components/Nav";
 import Hero from "./components/Hero";
 import CustomerReviews from "./components/CustomerReviews";
 import Footer from "./components/Footer";
+import Products from "./components/Products";
 
 const App = () => (
   <main className="relative">
@@ -11,6 +12,9 @@ const App = () => (
     </section>
     <section id="customer-reviews" className="p-6">
       <CustomerReviews />
+    </section>
+    <section id="products" className="p-6">
+      <Products />
     </section>
     <section id="contact" className="padding-x padding-t pb-8">
       <Footer />

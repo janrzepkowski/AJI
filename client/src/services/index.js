@@ -17,4 +17,20 @@ const getOrders = async () => {
   return response.data;
 };
 
-export default { login, signup, getOrders };
+const getProducts = async () => {
+  const response = await axios.get(`${baseUrl}/products`);
+  return response.data;
+};
+
+const getCategories = async () => {
+  const response = await axios.get(`${baseUrl}/categories`);
+  return response.data;
+};
+
+export default {
+  login,
+  signup,
+  getOrders,
+  getProducts,
+  getCategories,
+};
