@@ -40,7 +40,7 @@ const Cart = ({ onClose }) => {
                   <td className="py-2 px-4 border-b text-right">
                     <button
                       onClick={() => removeFromCart(item.id)}
-                      className="bg-red-500 text-white py-1 px-3 rounded"
+                      className="text-white font-bold py-2 px-4 rounded-full bg-red-500 transition-colors duration-300 mr-2"
                     >
                       Remove
                     </button>
@@ -54,15 +54,15 @@ const Cart = ({ onClose }) => {
       <div className="mt-4 flex justify-end">
         <button
           onClick={onClose}
-          className="bg-gray-500 text-white py-2 px-4 rounded"
+          className="text-white font-bold py-2 px-4 rounded-full bg-gray-300 transition-colors duration-300 mr-2"
         >
           Close
         </button>
         <button
           onClick={() => alert("Order placed!")}
-          className="bg-green-500 text-white py-2 px-4 rounded ml-2"
+          className="text-white font-bold py-2 px-4 rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
         >
-          Place Order
+          Checkout
         </button>
       </div>
     </div>

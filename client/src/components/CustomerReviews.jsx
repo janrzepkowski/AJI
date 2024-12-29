@@ -62,7 +62,7 @@ const CustomerReviews = () => {
       <div className="flex justify-center items-center">
         <button
           onClick={handlePrev}
-          className="text-white mr-4 p-2 bg-[#10AEF6] rounded-full"
+          className="font-bold text-lg text-white mr-4 w-10 h-10 flex items-center justify-center rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
         >
           {"<"}
         </button>
@@ -75,7 +75,7 @@ const CustomerReviews = () => {
         </div>
         <button
           onClick={handleNext}
-          className="text-white ml-4 p-2 bg-[#10AEF6] rounded-full"
+          className="font-bold text-lg text-white ml-4 w-10 h-10 flex items-center justify-center rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
         >
           {">"}
         </button>

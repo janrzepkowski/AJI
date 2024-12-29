@@ -87,7 +87,7 @@ const Products = () => {
                 <td className="py-2 px-4 border-b text-right">
                   <button
                     onClick={() => addToCart(product)}
-                    className="bg-[#10AEF6] text-white py-1 px-3 rounded"
+                    className="text-white font-bold py-2 px-4 rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
                   >
                     Add to Cart
                   </button>
