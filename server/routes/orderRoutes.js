@@ -14,8 +14,8 @@ const statusOrder = {
   CANCELLED: 4,
 };
 
-router.get("/", verifyToken, (req, res) => {
-  Order.find({ user_name: req.user.username })
+router.get("/", (req, res) => {
+  Order.find({})
     .populate("status_id")
     .populate("products.product_id")
     .then((orders) => {
@@ -23,7 +23,7 @@ router.get("/", verifyToken, (req, res) => {
     });
 });
 
-router.get("/:id", verifyToken, (req, res, next) => {
+router.get("/:id", (req, res, next) => {
   Order.findById(req.params.id)
     .populate("status_id")
     .populate("products.product_id")
@@ -37,7 +37,7 @@ router.get("/:id", verifyToken, (req, res, next) => {
     .catch((error) => next(error));
 });
 
-router.get("/status/:id", verifyToken, (req, res, next) => {
+router.get("/status/:id", (req, res, next) => {
   Order.find({ status_id: req.params.id })
     .populate("status_id")
     .populate("products.product_id")
