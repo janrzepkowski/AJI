@@ -12,4 +12,9 @@ const signup = async (userData) => {
   return response.data;
 };
 
-export default { login, signup };
+const getOrders = async () => {
+  const response = await axios.get(`${baseUrl}/orders`);
+  return response.data;
+};
+
+export default { login, signup, getOrders };

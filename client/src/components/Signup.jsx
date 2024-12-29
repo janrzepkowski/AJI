@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import authService from "../services/authService";
+import authService from "../services";
 
 const Signup = ({ isOpen, onClose }) => {
   const [username, setUsername] = useState("");
