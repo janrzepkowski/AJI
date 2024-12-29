@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import services from "../services";
+import { useCart } from "../context/CartContext";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [filterName, setFilterName] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -39,10 +41,6 @@ const Products = () => {
       : true;
     return matchesName && matchesCategory;
   });
-
-  const handleAddToCart = (product) => {
-    console.log(`Adding ${product.name} to cart`);
-  };
 
   return (
     <div className="p-8">
@@ -88,7 +86,7 @@ const Products = () => {
                 </td>
                 <td className="py-2 px-4 border-b text-right">
                   <button
-                    onClick={() => handleAddToCart(product)}
+                    onClick={() => addToCart(product)}
                     className="bg-[#10AEF6] text-white py-1 px-3 rounded"
                   >
                     Add to Cart

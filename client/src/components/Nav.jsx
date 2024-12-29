@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
 import HeaderLogo from "../assets/logo.png";
 import Login from "./Login";
 import Signup from "./Signup";
+import Cart from "./Cart";
+import { useCart } from "../context/CartContext";
 
 const Nav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { cartItemCount } = useCart();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -20,6 +24,10 @@ const Nav = () => {
 
   const toggleSignup = () => {
     setIsSignupOpen(!isSignupOpen);
+  };
+
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
   };
 
   const handleScroll = () => {
@@ -79,12 +87,22 @@ const Nav = () => {
                 Login
               </button>
             </li>
-            <li>
+            <li className="mr-4">
               <button
                 className="text-white font-bold hover:text-gray-300"
                 onClick={toggleSignup}
               >
                 Sign Up
+              </button>
+            </li>
+            <li className="relative">
+              <button className="text-white text-3xl" onClick={toggleCart}>
+                <FaShoppingCart />
+                {cartItemCount > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
               </button>
             </li>
           </ul>
@@ -149,7 +167,7 @@ const Nav = () => {
                 Login
               </button>
             </li>
-            <li>
+            <li className="mb-4">
               <button
                 className="text-gray-600 hover:text-black"
                 onClick={() => {
@@ -160,11 +178,40 @@ const Nav = () => {
                 Sign Up
               </button>
             </li>
+            <li>
+              <button
+                className="text-gray-600 hover:text-black"
+                onClick={() => {
+                  toggleMobileMenu();
+                  toggleCart();
+                }}
+              >
+                <FaShoppingCart />
+                {cartItemCount > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+            </li>
           </ul>
         </div>
       </header>
       <Login isOpen={isLoginOpen} onClose={toggleLogin} />
       <Signup isOpen={isSignupOpen} onClose={toggleSignup} />
+      {isCartOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+            <button
+              className="absolute top-2 right-2 text-black text-2xl"
+              onClick={toggleCart}
+            >
+              <FaTimes />
+            </button>
+            <Cart onClose={toggleCart} />
+          </div>
+        </div>
+      )}
     </>
   );
 };
