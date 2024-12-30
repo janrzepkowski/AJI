@@ -73,31 +73,27 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/refresh-token", (req, res) => {
-  if (req.cookies?.jwt) {
-    const refreshToken = req.cookies.jwt;
-    jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET,
-      (err, decoded) => {
-        if (err) {
-          return res
-            .status(StatusCodes.UNAUTHORIZED)
-            .json({ message: "Unauthorized" });
-        } else {
-          const accessToken = jwt.sign(
-            { username: decoded.username, id: decoded.id },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "1h" }
-          );
-          return res.json({ accessToken });
-        }
-      }
-    );
-  } else {
+  const refreshToken = req.cookies.jwt;
+  if (!refreshToken) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
       .json({ message: "Unauthorized" });
   }
+
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ message: "Unauthorized" });
+    }
+
+    const accessToken = jwt.sign(
+      { username: decoded.username, id: decoded.id, role: decoded.role },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1h" }
+    );
+    return res.json({ accessToken });
+  });
 });
 
 module.exports = router;

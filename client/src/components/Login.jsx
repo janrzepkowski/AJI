@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import authService from "../services";
 
-const Login = ({ isOpen, onClose }) => {
+const Login = ({ isOpen, onClose, onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -10,6 +10,7 @@ const Login = ({ isOpen, onClose }) => {
     try {
       const data = await authService.login({ username, password });
       console.log("Login successful:", data);
+      onLogin(data.accessToken);
       onClose();
     } catch (error) {
       console.error("Login error:", error.response.data.error);

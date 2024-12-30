@@ -3,12 +3,25 @@ import axios from "axios";
 const baseUrl = "http://localhost:3001/api";
 
 const login = async (credentials) => {
-  const response = await axios.post(`${baseUrl}/login`, credentials);
+  const response = await axios.post(`${baseUrl}/login`, credentials, {
+    withCredentials: true,
+  });
   return response.data;
 };
 
 const signup = async (userData) => {
-  const response = await axios.post(`${baseUrl}/signup`, userData);
+  const response = await axios.post(`${baseUrl}/signup`, userData, {
+    withCredentials: true,
+  });
+  return response.data;
+};
+
+const refreshToken = async () => {
+  const response = await axios.post(
+    `${baseUrl}/refresh-token`,
+    {},
+    { withCredentials: true }
+  );
   return response.data;
 };
 
@@ -30,6 +43,7 @@ const getCategories = async () => {
 export default {
   login,
   signup,
+  refreshToken,
   getOrders,
   getProducts,
   getCategories,

@@ -5,6 +5,7 @@ import Login from "./Login";
 import Signup from "./Signup";
 import Cart from "./Cart";
 import { useCart } from "../context/CartContext";
+import authService from "../services";
 
 const Nav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,6 +13,7 @@ const Nav = () => {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { cartItemCount } = useCart();
 
   const toggleMobileMenu = () => {
@@ -38,10 +40,40 @@ const Nav = () => {
     }
   };
 
+  const handleLogin = (token) => {
+    localStorage.setItem("accessToken", token);
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    setIsLoggedIn(false);
+  };
+
+  const refreshAccessToken = async () => {
+    try {
+      const data = await authService.refreshToken();
+      localStorage.setItem("accessToken", data.accessToken);
+    } catch (error) {
+      console.error("Error refreshing access token:", error);
+      handleLogout();
+    }
+  };
+
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+
+    const interval = setInterval(() => {
+      refreshAccessToken();
+    }, 25 * 1000); // Refresh token every 25 seconds
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      clearInterval(interval);
     };
   }, []);
 
@@ -79,22 +111,35 @@ const Nav = () => {
                 Contact
               </a>
             </li>
-            <li className="mr-4">
-              <button
-                className="text-white font-bold hover:text-gray-300"
-                onClick={toggleLogin}
-              >
-                Login
-              </button>
-            </li>
-            <li className="mr-4">
-              <button
-                className="text-white font-bold hover:text-gray-300"
-                onClick={toggleSignup}
-              >
-                Sign Up
-              </button>
-            </li>
+            {isLoggedIn ? (
+              <li className="mr-4">
+                <button
+                  className="text-white font-bold hover:text-gray-300"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </li>
+            ) : (
+              <>
+                <li className="mr-4">
+                  <button
+                    className="text-white font-bold hover:text-gray-300"
+                    onClick={toggleLogin}
+                  >
+                    Login
+                  </button>
+                </li>
+                <li className="mr-4">
+                  <button
+                    className="text-white font-bold hover:text-gray-300"
+                    onClick={toggleSignup}
+                  >
+                    Sign Up
+                  </button>
+                </li>
+              </>
+            )}
             <li className="relative">
               <button className="text-white text-3xl" onClick={toggleCart}>
                 <FaShoppingCart />
@@ -156,28 +201,44 @@ const Nav = () => {
                 Contact
               </a>
             </li>
-            <li className="mb-4">
-              <button
-                className="text-gray-600 hover:text-black"
-                onClick={() => {
-                  toggleMobileMenu();
-                  toggleLogin();
-                }}
-              >
-                Login
-              </button>
-            </li>
-            <li className="mb-4">
-              <button
-                className="text-gray-600 hover:text-black"
-                onClick={() => {
-                  toggleMobileMenu();
-                  toggleSignup();
-                }}
-              >
-                Sign Up
-              </button>
-            </li>
+            {isLoggedIn ? (
+              <li className="mb-4">
+                <button
+                  className="text-gray-600 hover:text-black"
+                  onClick={() => {
+                    toggleMobileMenu();
+                    handleLogout();
+                  }}
+                >
+                  Logout
+                </button>
+              </li>
+            ) : (
+              <>
+                <li className="mb-4">
+                  <button
+                    className="text-gray-600 hover:text-black"
+                    onClick={() => {
+                      toggleMobileMenu();
+                      toggleLogin();
+                    }}
+                  >
+                    Login
+                  </button>
+                </li>
+                <li className="mb-4">
+                  <button
+                    className="text-gray-600 hover:text-black"
+                    onClick={() => {
+                      toggleMobileMenu();
+                      toggleSignup();
+                    }}
+                  >
+                    Sign Up
+                  </button>
+                </li>
+              </>
+            )}
             <li>
               <button
                 className="text-gray-600 hover:text-black"
@@ -197,7 +258,7 @@ const Nav = () => {
           </ul>
         </div>
       </header>
-      <Login isOpen={isLoginOpen} onClose={toggleLogin} />
+      <Login isOpen={isLoginOpen} onClose={toggleLogin} onLogin={handleLogin} />
       <Signup isOpen={isSignupOpen} onClose={toggleSignup} />
       {isCartOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
