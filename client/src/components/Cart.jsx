@@ -1,8 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
+import AuthModal from "./AuthModal";
 
-const Cart = ({ onClose }) => {
+const Cart = ({ onClose, onLogin }) => {
   const { cart, updateCart, removeFromCart } = useCart();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("accessToken")
+  );
+
+  const handleCheckout = () => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+    } else {
+      alert("Order placed!");
+    }
+  };
+
+  const handleLogin = (token) => {
+    localStorage.setItem("accessToken", token);
+    setIsLoggedIn(true);
+    setIsAuthModalOpen(false);
+    onLogin(token);
+  };
 
   return (
     <div className="p-8">
@@ -59,12 +79,17 @@ const Cart = ({ onClose }) => {
           Close
         </button>
         <button
-          onClick={() => alert("Order placed!")}
+          onClick={handleCheckout}
           className="text-white font-bold py-2 px-4 rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
         >
           Checkout
         </button>
       </div>
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLogin={handleLogin}
+      />
     </div>
   );
 };

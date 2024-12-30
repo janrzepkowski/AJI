@@ -1,31 +1,24 @@
 import { useState, useEffect } from "react";
 import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
 import HeaderLogo from "../assets/logo.png";
-import Login from "./Login";
-import Signup from "./Signup";
+import AuthModal from "./AuthModal";
 import Cart from "./Cart";
 import { useCart } from "../context/CartContext";
 import authService from "../services";
 
-const Nav = () => {
+const Nav = ({ isLoggedIn, onLogout, onLogin }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { cartItemCount } = useCart();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const toggleLogin = () => {
-    setIsLoginOpen(!isLoginOpen);
-  };
-
-  const toggleSignup = () => {
-    setIsSignupOpen(!isSignupOpen);
+  const toggleAuthModal = () => {
+    setIsAuthModalOpen(!isAuthModalOpen);
   };
 
   const toggleCart = () => {
@@ -40,23 +33,13 @@ const Nav = () => {
     }
   };
 
-  const handleLogin = (token) => {
-    localStorage.setItem("accessToken", token);
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    setIsLoggedIn(false);
-  };
-
   const refreshAccessToken = async () => {
     try {
       const data = await authService.refreshToken();
       localStorage.setItem("accessToken", data.accessToken);
     } catch (error) {
       console.error("Error refreshing access token:", error);
-      handleLogout();
+      onLogout();
     }
   };
 
@@ -64,12 +47,12 @@ const Nav = () => {
     window.addEventListener("scroll", handleScroll);
     const token = localStorage.getItem("accessToken");
     if (token) {
-      setIsLoggedIn(true);
+      onLogin(token);
     }
 
     const interval = setInterval(() => {
       refreshAccessToken();
-    }, 25 * 1000); // Refresh token every 25 seconds
+    }, 55 * 60 * 1000); // 55 minutes
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -102,11 +85,6 @@ const Nav = () => {
               </a>
             </li>
             <li className="mr-4">
-              <a href="#about" className="text-white hover:text-gray-300">
-                About
-              </a>
-            </li>
-            <li className="mr-4">
               <a href="#contact" className="text-white hover:text-gray-300">
                 Contact
               </a>
@@ -115,30 +93,20 @@ const Nav = () => {
               <li className="mr-4">
                 <button
                   className="text-white font-bold hover:text-gray-300"
-                  onClick={handleLogout}
+                  onClick={onLogout}
                 >
                   Logout
                 </button>
               </li>
             ) : (
-              <>
-                <li className="mr-4">
-                  <button
-                    className="text-white font-bold hover:text-gray-300"
-                    onClick={toggleLogin}
-                  >
-                    Login
-                  </button>
-                </li>
-                <li className="mr-4">
-                  <button
-                    className="text-white font-bold hover:text-gray-300"
-                    onClick={toggleSignup}
-                  >
-                    Sign Up
-                  </button>
-                </li>
-              </>
+              <li className="mr-4">
+                <button
+                  className="text-white font-bold hover:text-gray-300"
+                  onClick={toggleAuthModal}
+                >
+                  Login / Sign Up
+                </button>
+              </li>
             )}
             <li className="relative">
               <button className="text-white text-3xl" onClick={toggleCart}>
@@ -185,15 +153,6 @@ const Nav = () => {
             </li>
             <li className="mb-4">
               <a
-                href="#about"
-                className="text-gray-600 hover:text-black"
-                onClick={toggleMobileMenu}
-              >
-                About
-              </a>
-            </li>
-            <li className="mb-4">
-              <a
                 href="#contact"
                 className="text-gray-600 hover:text-black"
                 onClick={toggleMobileMenu}
@@ -207,37 +166,24 @@ const Nav = () => {
                   className="text-gray-600 hover:text-black"
                   onClick={() => {
                     toggleMobileMenu();
-                    handleLogout();
+                    onLogout();
                   }}
                 >
                   Logout
                 </button>
               </li>
             ) : (
-              <>
-                <li className="mb-4">
-                  <button
-                    className="text-gray-600 hover:text-black"
-                    onClick={() => {
-                      toggleMobileMenu();
-                      toggleLogin();
-                    }}
-                  >
-                    Login
-                  </button>
-                </li>
-                <li className="mb-4">
-                  <button
-                    className="text-gray-600 hover:text-black"
-                    onClick={() => {
-                      toggleMobileMenu();
-                      toggleSignup();
-                    }}
-                  >
-                    Sign Up
-                  </button>
-                </li>
-              </>
+              <li className="mb-4">
+                <button
+                  className="text-gray-600 hover:text-black"
+                  onClick={() => {
+                    toggleMobileMenu();
+                    toggleAuthModal();
+                  }}
+                >
+                  Sign In / Register
+                </button>
+              </li>
             )}
             <li>
               <button
@@ -258,8 +204,11 @@ const Nav = () => {
           </ul>
         </div>
       </header>
-      <Login isOpen={isLoginOpen} onClose={toggleLogin} onLogin={handleLogin} />
-      <Signup isOpen={isSignupOpen} onClose={toggleSignup} />
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={toggleAuthModal}
+        onLogin={onLogin}
+      />
       {isCartOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
@@ -269,7 +218,7 @@ const Nav = () => {
             >
               <FaTimes />
             </button>
-            <Cart onClose={toggleCart} />
+            <Cart onClose={toggleCart} onLogin={onLogin} />
           </div>
         </div>
       )}
