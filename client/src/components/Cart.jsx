@@ -24,6 +24,11 @@ const Cart = ({ onClose, onLogin }) => {
     onLogin(token);
   };
 
+  const totalPrice = cart.reduce(
+    (total, item) => total + item.unit_price * item.quantity,
+    0
+  );
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Cart</h1>
@@ -37,7 +42,7 @@ const Cart = ({ onClose, onLogin }) => {
                 <th className="py-2 px-4 border-b text-left">Name</th>
                 <th className="py-2 px-4 border-b text-left">Price</th>
                 <th className="py-2 px-4 border-b text-left">Quantity</th>
-                <th className="py-2 px-4 border-b text-right">Actions</th>
+                <th className="py-2 px-4 border-b text-right"></th>
               </tr>
             </thead>
             <tbody>
@@ -69,6 +74,11 @@ const Cart = ({ onClose, onLogin }) => {
               ))}
             </tbody>
           </table>
+          <div className="mt-4 text-right">
+            <h2 className="text-xl font-bold">
+              Total: ${totalPrice.toFixed(2)}
+            </h2>
+          </div>
         </div>
       )}
       <div className="mt-4 flex justify-end">
