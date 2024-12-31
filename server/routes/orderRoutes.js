@@ -50,6 +50,12 @@ router.get("/status/:id", (req, res, next) => {
 router.post("/", verifyToken, async (req, res, next) => {
   const { user_name, email, phone_number, products } = req.body;
 
+  if (!products || products.length === 0) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: "Order must contain at least one product" });
+  }
+
   try {
     const productIds = products.map((p) => p.product_id);
     const existingProducts = await Product.find({ _id: { $in: productIds } });
