@@ -40,6 +40,16 @@ const getCategories = async () => {
   return response.data;
 };
 
+const createOrder = async (orderData, token) => {
+  const response = await axios.post(`${baseUrl}/orders`, orderData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+  return response.data;
+};
+
 export default {
   login,
   signup,
@@ -47,4 +57,5 @@ export default {
   getOrders,
   getProducts,
   getCategories,
+  createOrder,
 };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import AuthModal from "./AuthModal";
+import OrderConfirmation from "./OrderConfirmation";
 
 const Cart = ({ onClose, onLogin }) => {
   const { cart, updateCart, removeFromCart } = useCart();
@@ -8,12 +9,13 @@ const Cart = ({ onClose, onLogin }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("accessToken")
   );
+  const [isOrderConfirmationOpen, setIsOrderConfirmationOpen] = useState(false);
 
   const handleCheckout = () => {
     if (!isLoggedIn) {
       setIsAuthModalOpen(true);
     } else {
-      alert("Order placed!");
+      setIsOrderConfirmationOpen(true);
     }
   };
 
@@ -28,6 +30,12 @@ const Cart = ({ onClose, onLogin }) => {
     (total, item) => total + item.unit_price * item.quantity,
     0
   );
+
+  if (isOrderConfirmationOpen) {
+    return (
+      <OrderConfirmation onClose={() => setIsOrderConfirmationOpen(false)} />
+    );
+  }
 
   return (
     <div className="p-8">
