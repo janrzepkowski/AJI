@@ -6,7 +6,7 @@ import Cart from "./Cart";
 import { useCart } from "../context/CartContext";
 import authService from "../services";
 
-const Nav = ({ isLoggedIn, onLogout, onLogin }) => {
+const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -46,8 +46,9 @@ const Nav = ({ isLoggedIn, onLogout, onLogin }) => {
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     const token = localStorage.getItem("accessToken");
-    if (token) {
-      onLogin(token);
+    const role = localStorage.getItem("userRole");
+    if (token && role) {
+      onLogin(token, role);
     }
 
     const interval = setInterval(() => {
@@ -89,6 +90,26 @@ const Nav = ({ isLoggedIn, onLogout, onLogin }) => {
                 Contact
               </a>
             </li>
+            {isLoggedIn && userRole === "EMPLOYEE" && (
+              <>
+                <li className="mr-4">
+                  <a
+                    href="#manage-products"
+                    className="text-white hover:text-gray-300"
+                  >
+                    Manage Products
+                  </a>
+                </li>
+                <li className="mr-4">
+                  <a
+                    href="#manage-orders"
+                    className="text-white hover:text-gray-300"
+                  >
+                    Manage Orders
+                  </a>
+                </li>
+              </>
+            )}
             {isLoggedIn ? (
               <li className="mr-4">
                 <button
@@ -160,6 +181,28 @@ const Nav = ({ isLoggedIn, onLogout, onLogin }) => {
                 Contact
               </a>
             </li>
+            {isLoggedIn && userRole === "EMPLOYEE" && (
+              <>
+                <li className="mb-4">
+                  <a
+                    href="#manage-products"
+                    className="text-gray-600 hover:text-black"
+                    onClick={toggleMobileMenu}
+                  >
+                    Manage Products
+                  </a>
+                </li>
+                <li className="mb-4">
+                  <a
+                    href="#manage-orders"
+                    className="text-gray-600 hover:text-black"
+                    onClick={toggleMobileMenu}
+                  >
+                    Manage Orders
+                  </a>
+                </li>
+              </>
+            )}
             {isLoggedIn ? (
               <li className="mb-4">
                 <button
@@ -218,7 +261,7 @@ const Nav = ({ isLoggedIn, onLogout, onLogin }) => {
             >
               <FaTimes />
             </button>
-            <Cart onClose={toggleCart} onLogin={onLogin} />
+            <Cart onClose={toggleCart} />
           </div>
         </div>
       )}

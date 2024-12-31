@@ -29,7 +29,7 @@ router.post("/signup", async (req, res) => {
       secure: true,
       maxAge: 24 * 60 * 60 * 1000,
     });
-    res.status(StatusCodes.OK).json({ accessToken });
+    res.status(StatusCodes.OK).json({ accessToken, role: user.role });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
@@ -66,7 +66,7 @@ router.post("/login", async (req, res) => {
       secure: true,
       maxAge: 24 * 60 * 60 * 1000,
     });
-    res.status(StatusCodes.OK).json({ accessToken });
+    res.status(StatusCodes.OK).json({ accessToken, role: user.role });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }

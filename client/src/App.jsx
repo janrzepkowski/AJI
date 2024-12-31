@@ -4,22 +4,26 @@ import Hero from "./components/Hero";
 import CustomerReviews from "./components/CustomerReviews";
 import Footer from "./components/Footer";
 import Products from "./components/Products";
-import Cart from "./components/Cart";
 import { CartProvider } from "./context/CartContext";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("accessToken")
   );
+  const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
 
-  const handleLogin = (token) => {
+  const handleLogin = (token, role) => {
     localStorage.setItem("accessToken", token);
+    localStorage.setItem("userRole", role);
     setIsLoggedIn(true);
+    setUserRole(role);
   };
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userRole");
     setIsLoggedIn(false);
+    setUserRole(null);
   };
 
   return (
@@ -28,6 +32,7 @@ const App = () => {
         <header>
           <Nav
             isLoggedIn={isLoggedIn}
+            userRole={userRole}
             onLogout={handleLogout}
             onLogin={handleLogin}
           />

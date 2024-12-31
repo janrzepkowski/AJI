@@ -16,7 +16,9 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
         password: loginPassword,
       });
       console.log("Login successful:", data);
-      onLogin(data.accessToken);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("userRole", data.role);
+      onLogin(data.accessToken, data.role);
       onClose();
     } catch (error) {
       console.error(
@@ -35,7 +37,9 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
         role: signupRole,
       });
       console.log("Signup successful:", data);
-      onLogin(data.accessToken); // Call onLogin with the access token
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("userRole", data.role);
+      onLogin(data.accessToken, data.role);
       onClose();
     } catch (error) {
       console.error(
