@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
@@ -6,27 +6,81 @@ import CustomerReviews from "./components/CustomerReviews";
 import Footer from "./components/Footer";
 import Products from "./components/Products";
 import Orders from "./components/Orders";
+import OrderConfirmation from "./components/OrderConfirmation";
+import AuthModal from "./components/AuthModal";
 import { CartProvider } from "./context/CartContext";
+import authService from "./services";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("accessToken")
   );
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
+  const [userName, setUserName] = useState(localStorage.getItem("userName"));
+  const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
+  const [userPhoneNumber, setUserPhoneNumber] = useState(
+    localStorage.getItem("userPhoneNumber")
+  );
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  const handleLogin = (token, role) => {
+  const handleLogin = (token, role, username, email, phoneNumber) => {
     localStorage.setItem("accessToken", token);
     localStorage.setItem("userRole", role);
+    localStorage.setItem("userName", username);
+    localStorage.setItem("userEmail", email);
+    localStorage.setItem("userPhoneNumber", phoneNumber);
     setIsLoggedIn(true);
     setUserRole(role);
+    setUserName(username);
+    setUserEmail(email);
+    setUserPhoneNumber(phoneNumber);
   };
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userPhoneNumber");
     setIsLoggedIn(false);
     setUserRole(null);
+    setUserName(null);
+    setUserEmail(null);
+    setUserPhoneNumber(null);
   };
+
+  const toggleAuthModal = () => {
+    setIsAuthModalOpen(!isAuthModalOpen);
+  };
+
+  const refreshAccessToken = async () => {
+    try {
+      const data = await authService.refreshToken();
+      localStorage.setItem("accessToken", data.accessToken);
+    } catch (error) {
+      console.error("Error refreshing access token:", error);
+      handleLogout();
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    const role = localStorage.getItem("userRole");
+    const username = localStorage.getItem("userName");
+    const email = localStorage.getItem("userEmail");
+    const phoneNumber = localStorage.getItem("userPhoneNumber");
+    if (token && role && username && email && phoneNumber) {
+      handleLogin(token, role, username, email, phoneNumber);
+    }
+
+    const interval = setInterval(() => {
+      refreshAccessToken();
+    }, 55 * 60 * 1000); // 55 minutes
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <CartProvider>
@@ -36,15 +90,26 @@ const App = () => {
             <Nav
               isLoggedIn={isLoggedIn}
               userRole={userRole}
+              userName={userName}
               onLogout={handleLogout}
               onLogin={handleLogin}
+              toggleAuthModal={toggleAuthModal}
             />
           </header>
           <main className="flex-grow mt-16">
             <Routes>
               <Route path="/orders" element={<Orders />} />
-              <Route path="/products" element={<Products />} />{" "}
-              {/* Add the new route */}
+              <Route path="/products" element={<Products />} />
+              <Route
+                path="/order-confirmation"
+                element={
+                  <OrderConfirmation
+                    userName={userName}
+                    userEmail={userEmail}
+                    userPhoneNumber={userPhoneNumber}
+                  />
+                }
+              />
               <Route
                 path="/"
                 element={
@@ -71,6 +136,11 @@ const App = () => {
           </footer>
         </div>
       </Router>
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={toggleAuthModal}
+        onLogin={handleLogin}
+      />
     </CartProvider>
   );
 };

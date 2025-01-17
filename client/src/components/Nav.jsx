@@ -1,15 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
 import HeaderLogo from "../assets/logo.png";
-import AuthModal from "./AuthModal";
 import Cart from "./Cart";
 import { useCart } from "../context/CartContext";
-import authService from "../services";
 
-const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
+const Nav = ({ isLoggedIn, userRole, userName, onLogout, toggleAuthModal }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartItemCount } = useCart();
 
@@ -17,39 +14,9 @@ const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const toggleAuthModal = () => {
-    setIsAuthModalOpen(!isAuthModalOpen);
-  };
-
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
   };
-
-  const refreshAccessToken = async () => {
-    try {
-      const data = await authService.refreshToken();
-      localStorage.setItem("accessToken", data.accessToken);
-    } catch (error) {
-      console.error("Error refreshing access token:", error);
-      onLogout();
-    }
-  };
-
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const role = localStorage.getItem("userRole");
-    if (token && role) {
-      onLogin(token, role);
-    }
-
-    const interval = setInterval(() => {
-      refreshAccessToken();
-    }, 55 * 60 * 1000); // 55 minutes
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
 
   return (
     <>
@@ -251,11 +218,6 @@ const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
           </ul>
         </div>
       </header>
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={toggleAuthModal}
-        onLogin={onLogin}
-      />
       {isCartOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">

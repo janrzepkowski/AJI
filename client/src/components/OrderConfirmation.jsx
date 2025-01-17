@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import api from "../services";
 
-const OrderConfirmation = ({ onClose }) => {
+const OrderConfirmation = ({
+  onClose,
+  userName: initialUserName,
+  userEmail: initialUserEmail,
+  userPhoneNumber: initialUserPhoneNumber,
+}) => {
   const { cart, updateCart, removeFromCart, clearCart } = useCart();
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [userName, setUserName] = useState(initialUserName);
+  const [email, setEmail] = useState(initialUserEmail);
+  const [phoneNumber, setPhoneNumber] = useState(initialUserPhoneNumber);
 
   const totalPrice = cart.reduce(
     (total, item) => total + item.unit_price * item.quantity,
