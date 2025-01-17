@@ -27,6 +27,7 @@ const Orders = () => {
               <th className="py-2 px-4 border-b text-left">Order ID</th>
               <th className="py-2 px-4 border-b text-left">User Name</th>
               <th className="py-2 px-4 border-b text-left">Email</th>
+              <th className="py-2 px-4 border-b text-left">Phone Number</th>
               <th className="py-2 px-4 border-b text-left">Status</th>
               <th className="py-2 px-4 border-b text-left">Products</th>
             </tr>
@@ -37,6 +38,7 @@ const Orders = () => {
                 <td className="py-2 px-4 border-b">{order.id}</td>
                 <td className="py-2 px-4 border-b">{order.user_name}</td>
                 <td className="py-2 px-4 border-b">{order.email}</td>
+                <td className="py-2 px-4 border-b">{order.phone_number}</td>
                 <td className="py-2 px-4 border-b">
                   {order.status_id ? order.status_id.name : "Unknown"}
                 </td>
