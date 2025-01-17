@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
 import HeaderLogo from "../assets/logo.png";
 import AuthModal from "./AuthModal";
@@ -10,7 +11,6 @@ const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const { cartItemCount } = useCart();
 
   const toggleMobileMenu = () => {
@@ -25,14 +25,6 @@ const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
     setIsCartOpen(!isCartOpen);
   };
 
-  const handleScroll = () => {
-    if (window.scrollY > 50) {
-      setIsScrolled(true);
-    } else {
-      setIsScrolled(false);
-    }
-  };
-
   const refreshAccessToken = async () => {
     try {
       const data = await authService.refreshToken();
@@ -44,7 +36,6 @@ const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
     const token = localStorage.getItem("accessToken");
     const role = localStorage.getItem("userRole");
     if (token && role) {
@@ -56,57 +47,59 @@ const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
     }, 55 * 60 * 1000); // 55 minutes
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       clearInterval(interval);
     };
   }, []);
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-          isScrolled ? "bg-black" : "bg-transparent"
-        }`}
-      >
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black">
         <nav className="flex justify-between items-center max-container padding-x py-4">
-          <a href="#home" className="flex items-center">
+          <Link to="/" className="flex items-center">
             <img src={HeaderLogo} alt="logo" className="w-10 h-10 mx-2" />
             <span className="text-2xl font-bold text-white">Bike Nation</span>
-          </a>
+          </Link>
 
           <ul className="hidden md:flex items-center">
             <li className="mr-4">
-              <a href="#home" className="text-white hover:text-gray-300">
+              <Link to="/" className="text-white hover:text-gray-300">
                 Home
-              </a>
+              </Link>
             </li>
             <li className="mr-4">
-              <a href="#products" className="text-white hover:text-gray-300">
+              <Link to="/products" className="text-white hover:text-gray-300">
                 Products
-              </a>
+              </Link>
             </li>
             <li className="mr-4">
-              <a href="#contact" className="text-white hover:text-gray-300">
+              <Link to="/#contact" className="text-white hover:text-gray-300">
                 Contact
-              </a>
+              </Link>
             </li>
+            {isLoggedIn && (
+              <li className="mr-4">
+                <Link to="/orders" className="text-white hover:text-gray-300">
+                  Orders
+                </Link>
+              </li>
+            )}
             {isLoggedIn && userRole === "EMPLOYEE" && (
               <>
                 <li className="mr-4">
-                  <a
-                    href="#manage-products"
+                  <Link
+                    to="/#manage-products"
                     className="text-white hover:text-gray-300"
                   >
                     Manage Products
-                  </a>
+                  </Link>
                 </li>
                 <li className="mr-4">
-                  <a
-                    href="#manage-orders"
+                  <Link
+                    to="/#manage-orders"
                     className="text-white hover:text-gray-300"
                   >
                     Manage Orders
-                  </a>
+                  </Link>
                 </li>
               </>
             )}
@@ -155,51 +148,62 @@ const Nav = ({ isLoggedIn, userRole, onLogout, onLogin }) => {
         >
           <ul className="flex flex-col items-start p-4">
             <li className="mb-4">
-              <a
-                href="#home"
+              <Link
+                to="/"
                 className="text-gray-600 hover:text-black"
                 onClick={toggleMobileMenu}
               >
                 Home
-              </a>
+              </Link>
             </li>
             <li className="mb-4">
-              <a
-                href="#products"
+              <Link
+                to="/products"
                 className="text-gray-600 hover:text-black"
                 onClick={toggleMobileMenu}
               >
                 Products
-              </a>
+              </Link>
             </li>
             <li className="mb-4">
-              <a
-                href="#contact"
+              <Link
+                to="/#contact"
                 className="text-gray-600 hover:text-black"
                 onClick={toggleMobileMenu}
               >
                 Contact
-              </a>
+              </Link>
             </li>
+            {isLoggedIn && (
+              <li className="mb-4">
+                <Link
+                  to="/orders"
+                  className="text-gray-600 hover:text-black"
+                  onClick={toggleMobileMenu}
+                >
+                  Orders
+                </Link>
+              </li>
+            )}
             {isLoggedIn && userRole === "EMPLOYEE" && (
               <>
                 <li className="mb-4">
-                  <a
-                    href="#manage-products"
+                  <Link
+                    to="/#manage-products"
                     className="text-gray-600 hover:text-black"
                     onClick={toggleMobileMenu}
                   >
                     Manage Products
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a
-                    href="#manage-orders"
+                  <Link
+                    to="/#manage-orders"
                     className="text-gray-600 hover:text-black"
                     onClick={toggleMobileMenu}
                   >
                     Manage Orders
-                  </a>
+                  </Link>
                 </li>
               </>
             )}
