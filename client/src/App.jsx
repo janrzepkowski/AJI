@@ -98,7 +98,7 @@ const App = () => {
           </header>
           <main className="flex-grow mt-16">
             <Routes>
-              <Route path="/orders" element={<Orders />} />
+              <Route path="/orders" element={<Orders userRole={userRole} />} />
               <Route path="/products" element={<Products />} />
               <Route
                 path="/order-confirmation"
