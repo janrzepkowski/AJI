@@ -6,6 +6,7 @@ const Orders = ({ userRole }) => {
   const [statuses, setStatuses] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editOrder, setEditOrder] = useState(null);
+  const [filterStatus, setFilterStatus] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -92,9 +93,40 @@ const Orders = ({ userRole }) => {
     }
   };
 
+  const handleFilterStatusChange = async (e) => {
+    const { value } = e.target;
+    setFilterStatus(value);
+    if (value) {
+      try {
+        const filteredOrders = await services.getOrdersByStatus(value);
+        setOrders(filteredOrders);
+      } catch (error) {
+        console.error("Error fetching orders by status:", error);
+      }
+    } else {
+      const allOrders = await services.getOrders();
+      setOrders(allOrders);
+    }
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Orders</h1>
+      <div className="mb-4">
+        <label className="block text-gray-700">Filter by Status</label>
+        <select
+          value={filterStatus}
+          onChange={handleFilterStatusChange}
+          className="w-full p-2 border border-gray-300 rounded"
+        >
+          <option value="">All</option>
+          {statuses.map((status) => (
+            <option key={status.id} value={status.id}>
+              {status.name}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
