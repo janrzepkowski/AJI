@@ -9,6 +9,7 @@ import Orders from "./components/Orders";
 import OrderConfirmation from "./components/OrderConfirmation";
 import UpdateOrder from "./components/UpdateOrder";
 import UpdateProduct from "./components/UpdateProduct";
+import AddProduct from "./components/AddProduct";
 import AuthModal from "./components/AuthModal";
 import { CartProvider } from "./context/CartContext";
 import authService from "./services";
@@ -122,6 +123,10 @@ const App = () => {
               <Route
                 path="/products/:id"
                 element={<UpdateProduct userRole={userRole} />}
+              />
+              <Route
+                path="/add-product"
+                element={<AddProduct userRole={userRole} />}
               />
               <Route
                 path="/"

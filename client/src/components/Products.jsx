@@ -79,6 +79,16 @@ const Products = ({ userRole }) => {
           ))}
         </select>
       </div>
+      {userRole === "EMPLOYEE" && (
+        <div className="mb-6">
+          <button
+            onClick={() => navigate("/add-product")}
+            className="text-white font-bold py-2 px-4 rounded-full bg-green-600 hover:bg-green-800 transition-colors duration-300"
+          >
+            Add New Product
+          </button>
+        </div>
+      )}
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
