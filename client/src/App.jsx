@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import Products from "./components/Products";
 import Orders from "./components/Orders";
 import OrderConfirmation from "./components/OrderConfirmation";
+import UpdateOrder from "./components/UpdateOrder";
 import AuthModal from "./components/AuthModal";
 import { CartProvider } from "./context/CartContext";
 import authService from "./services";
@@ -109,6 +110,10 @@ const App = () => {
                     userPhoneNumber={userPhoneNumber}
                   />
                 }
+              />
+              <Route
+                path="/orders/:id"
+                element={<UpdateOrder userRole={userRole} />}
               />
               <Route
                 path="/"
