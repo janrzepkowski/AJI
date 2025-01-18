@@ -8,6 +8,7 @@ const UpdateProduct = ({ userRole }) => {
   const [product, setProduct] = useState(null);
   const [categories, setCategories] = useState([]);
   const [editProduct, setEditProduct] = useState(null);
+  const [seoDescription, setSeoDescription] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -69,6 +70,29 @@ const UpdateProduct = ({ userRole }) => {
 
   const handleCancel = () => {
     navigate("/products");
+  };
+
+  const handleDelete = async () => {
+    const token = localStorage.getItem("accessToken");
+    try {
+      await services.deleteProduct(id, token);
+      navigate("/products");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
+  const fetchSeoDescription = async () => {
+    try {
+      const response = await services.getProductSeoDescription(id);
+      setSeoDescription(response);
+      setEditProduct((prevProduct) => ({
+        ...prevProduct,
+        description: response,
+      }));
+    } catch (error) {
+      console.error("Error fetching SEO description:", error);
+    }
   };
 
   if (!product || !editProduct) {
@@ -149,8 +173,30 @@ const UpdateProduct = ({ userRole }) => {
           >
             Save
           </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="text-white font-bold py-2 px-4 rounded-full bg-red-600 hover:bg-red-800 transition-colors duration-300 ml-2"
+          >
+            Delete
+          </button>
         </div>
       </form>
+      <div className="mt-6">
+        <button
+          type="button"
+          onClick={fetchSeoDescription}
+          className="text-white font-bold py-2 px-4 rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
+        >
+          Fetch SEO Description
+        </button>
+        {seoDescription && (
+          <div className="mt-4 p-4 border border-gray-300 rounded bg-gray-50">
+            <h2 className="text-xl font-bold mb-2">SEO Description</h2>
+            <p>{seoDescription}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

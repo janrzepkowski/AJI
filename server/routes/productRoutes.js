@@ -64,7 +64,7 @@ router.get("/:id/seo-description", async (req, res, next) => {
     const seoDescription =
       response.data.choices[0]?.message?.content || "No description available";
 
-    res.send(`<div>${seoDescription}</div>`);
+    res.send(seoDescription);
   } catch (error) {
     next(error);
   }

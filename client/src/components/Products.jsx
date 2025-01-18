@@ -113,7 +113,8 @@ const Products = ({ userRole }) => {
                       e.stopPropagation();
                       addToCart(product);
                     }}
-                    className="text-white font-bold py-2 px-4 rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
+                    className="text-white font-bold rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
+                    style={{ width: "120px", height: "40px" }}
                   >
                     Add to Cart
                   </button>
