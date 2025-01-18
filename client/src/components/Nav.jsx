@@ -50,26 +50,6 @@ const Nav = ({ isLoggedIn, userRole, userName, onLogout, toggleAuthModal }) => {
                 </Link>
               </li>
             )}
-            {isLoggedIn && userRole === "EMPLOYEE" && (
-              <>
-                <li className="mr-4">
-                  <Link
-                    to="/#manage-products"
-                    className="text-white hover:text-gray-300"
-                  >
-                    Manage Products
-                  </Link>
-                </li>
-                <li className="mr-4">
-                  <Link
-                    to="/#manage-orders"
-                    className="text-white hover:text-gray-300"
-                  >
-                    Manage Orders
-                  </Link>
-                </li>
-              </>
-            )}
             {isLoggedIn ? (
               <li className="mr-4">
                 <button
@@ -151,28 +131,6 @@ const Nav = ({ isLoggedIn, userRole, userName, onLogout, toggleAuthModal }) => {
                   Orders
                 </Link>
               </li>
-            )}
-            {isLoggedIn && userRole === "EMPLOYEE" && (
-              <>
-                <li className="mb-4">
-                  <Link
-                    to="/#manage-products"
-                    className="text-gray-600 hover:text-black"
-                    onClick={toggleMobileMenu}
-                  >
-                    Manage Products
-                  </Link>
-                </li>
-                <li className="mb-4">
-                  <Link
-                    to="/#manage-orders"
-                    className="text-gray-600 hover:text-black"
-                    onClick={toggleMobileMenu}
-                  >
-                    Manage Orders
-                  </Link>
-                </li>
-              </>
             )}
             {isLoggedIn ? (
               <li className="mb-4">
