@@ -101,7 +101,10 @@ const App = () => {
           <main className="flex-grow mt-16">
             <Routes>
               <Route path="/orders" element={<Orders userRole={userRole} />} />
-              <Route path="/products" element={<Products />} />
+              <Route
+                path="/products"
+                element={<Products userRole={userRole} />}
+              />
               <Route
                 path="/order-confirmation"
                 element={
@@ -134,7 +137,7 @@ const App = () => {
                       <CustomerReviews />
                     </section>
                     <section id="products" className="p-6">
-                      <Products />
+                      <Products userRole={userRole} />
                     </section>
                   </>
                 }

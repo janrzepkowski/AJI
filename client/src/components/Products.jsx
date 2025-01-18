@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import services from "../services";
 import { useCart } from "../context/CartContext";
 
-const Products = () => {
+const Products = ({ userRole }) => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [filterName, setFilterName] = useState("");
@@ -45,7 +45,9 @@ const Products = () => {
   });
 
   const handleProductClick = (productId) => {
-    navigate(`/products/${productId}`);
+    if (userRole === "EMPLOYEE") {
+      navigate(`/products/${productId}`);
+    }
   };
 
   const getCategoryName = (categoryId) => {
@@ -92,7 +94,9 @@ const Products = () => {
             {filteredProducts.map((product) => (
               <tr
                 key={product.id}
-                className="hover:bg-gray-50 cursor-pointer"
+                className={`hover:bg-gray-50 ${
+                  userRole === "EMPLOYEE" ? "cursor-pointer" : ""
+                }`}
                 onClick={() => handleProductClick(product.id)}
               >
                 <td className="py-2 px-4 border-b">{product.name}</td>
