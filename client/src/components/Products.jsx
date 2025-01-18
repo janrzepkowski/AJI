@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import services from "../services";
 import { useCart } from "../context/CartContext";
 
@@ -8,6 +9,7 @@ const Products = () => {
   const [filterName, setFilterName] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -42,6 +44,15 @@ const Products = () => {
     return matchesName && matchesCategory;
   });
 
+  const handleProductClick = (productId) => {
+    navigate(`/products/${productId}`);
+  };
+
+  const getCategoryName = (categoryId) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category ? category.name : "Unknown";
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Products</h1>
@@ -73,20 +84,31 @@ const Products = () => {
               <th className="py-2 px-4 border-b text-left">Name</th>
               <th className="py-2 px-4 border-b text-left">Description</th>
               <th className="py-2 px-4 border-b text-left">Price</th>
+              <th className="py-2 px-4 border-b text-left">Category</th>
               <th className="py-2 px-4 border-b text-right"></th>
             </tr>
           </thead>
           <tbody>
             {filteredProducts.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50">
+              <tr
+                key={product.id}
+                className="hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleProductClick(product.id)}
+              >
                 <td className="py-2 px-4 border-b">{product.name}</td>
                 <td className="py-2 px-4 border-b">{product.description}</td>
                 <td className="py-2 px-4 border-b">
                   ${product.unit_price.toFixed(2)}
                 </td>
+                <td className="py-2 px-4 border-b">
+                  {getCategoryName(product.category_id)}
+                </td>
                 <td className="py-2 px-4 border-b text-right">
                   <button
-                    onClick={() => addToCart(product)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(product);
+                    }}
                     className="text-white font-bold py-2 px-4 rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
                   >
                     Add to Cart

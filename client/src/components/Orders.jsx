@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import services from "../services";
 
-const Orders = ({ userRole }) => {
+const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [filterStatus, setFilterStatus] = useState("");
@@ -85,9 +85,7 @@ const Orders = ({ userRole }) => {
             {orders.map((order) => (
               <tr
                 key={order.id}
-                className={`hover:bg-gray-50 cursor-pointer ${
-                  userRole === "EMPLOYEE" ? "hover:underline" : ""
-                }`}
+                className="hover:bg-gray-50 cursor-pointer"
                 onClick={() => handleOrderClick(order.id)}
               >
                 <td className="py-2 px-4 border-b">{order.id}</td>
