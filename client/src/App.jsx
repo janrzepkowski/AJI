@@ -10,6 +10,7 @@ import OrderConfirmation from "./components/OrderConfirmation";
 import UpdateOrder from "./components/UpdateOrder";
 import UpdateProduct from "./components/UpdateProduct";
 import AddProduct from "./components/AddProduct";
+import RateOrder from "./components/RateOrder";
 import AuthModal from "./components/AuthModal";
 import { CartProvider } from "./context/CartContext";
 import authService from "./services";
@@ -101,7 +102,10 @@ const App = () => {
           </header>
           <main className="flex-grow mt-16">
             <Routes>
-              <Route path="/orders" element={<Orders userRole={userRole} />} />
+              <Route
+                path="/orders"
+                element={<Orders userRole={userRole} userName={userName} />}
+              />
               <Route
                 path="/products"
                 element={<Products userRole={userRole} />}
@@ -120,6 +124,7 @@ const App = () => {
                 path="/orders/:id"
                 element={<UpdateOrder userRole={userRole} />}
               />
+              <Route path="/orders/:id/opinions" element={<RateOrder />} />
               <Route
                 path="/products/:id"
                 element={<UpdateProduct userRole={userRole} />}

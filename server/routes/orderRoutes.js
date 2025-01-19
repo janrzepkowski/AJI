@@ -170,6 +170,12 @@ router.post("/:id/opinions", verifyToken, async (req, res, next) => {
       });
     }
 
+    if (order.opinions && order.opinions.length > 0) {
+      return res
+        .status(400)
+        .json({ error: "An opinion already exists for this order" });
+    }
+
     order.opinions.push({ rating, content });
     await order.save();
 

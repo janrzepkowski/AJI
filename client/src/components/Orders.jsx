@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import services from "../services";
 
-const Orders = ({ userRole }) => {
+const Orders = ({ userRole, userName }) => {
   const [orders, setOrders] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [filterStatus, setFilterStatus] = useState("");
@@ -12,7 +12,14 @@ const Orders = ({ userRole }) => {
     const fetchOrders = async () => {
       try {
         const data = await services.getOrders();
-        setOrders(data);
+        if (userRole === "CLIENT") {
+          const filteredOrders = data.filter(
+            (order) => order.user_name === userName
+          );
+          setOrders(filteredOrders);
+        } else {
+          setOrders(data);
+        }
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -29,7 +36,7 @@ const Orders = ({ userRole }) => {
 
     fetchOrders();
     fetchStatuses();
-  }, []);
+  }, [userRole, userName]);
 
   const handleFilterStatusChange = async (e) => {
     const { value } = e.target;
@@ -37,13 +44,27 @@ const Orders = ({ userRole }) => {
     if (value) {
       try {
         const filteredOrders = await services.getOrdersByStatus(value);
-        setOrders(filteredOrders);
+        if (userRole === "CLIENT") {
+          const clientFilteredOrders = filteredOrders.filter(
+            (order) => order.user_name === userName
+          );
+          setOrders(clientFilteredOrders);
+        } else {
+          setOrders(filteredOrders);
+        }
       } catch (error) {
         console.error("Error fetching orders by status:", error);
       }
     } else {
       const allOrders = await services.getOrders();
-      setOrders(allOrders);
+      if (userRole === "CLIENT") {
+        const clientFilteredOrders = allOrders.filter(
+          (order) => order.user_name === userName
+        );
+        setOrders(clientFilteredOrders);
+      } else {
+        setOrders(allOrders);
+      }
     }
   };
 
@@ -53,17 +74,20 @@ const Orders = ({ userRole }) => {
     }
   };
 
+  const handleRateOrderClick = (orderId) => {
+    navigate(`/orders/${orderId}/opinions`);
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Orders</h1>
-      <div className="mb-4">
-        <label className="block text-gray-700">Filter by Status</label>
+      <div className="flex space-x-4 mb-6">
         <select
           value={filterStatus}
           onChange={handleFilterStatusChange}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="p-2 border border-gray-300 rounded w-full"
         >
-          <option value="">All</option>
+          <option value="">All Statuses</option>
           {statuses.map((status) => (
             <option key={status.id} value={status.id}>
               {status.name}
@@ -81,6 +105,7 @@ const Orders = ({ userRole }) => {
               <th className="py-2 px-4 border-b text-left">Phone Number</th>
               <th className="py-2 px-4 border-b text-left">Status</th>
               <th className="py-2 px-4 border-b text-left">Products</th>
+              <th className="py-2 px-4 border-b text-left"></th>
             </tr>
           </thead>
           <tbody>
@@ -110,6 +135,20 @@ const Orders = ({ userRole }) => {
                       (x{product.quantity})
                     </div>
                   ))}
+                </td>
+                <td className="py-2 px-4 border-b">
+                  {userRole === "CLIENT" && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRateOrderClick(order.id);
+                      }}
+                      className="text-white font-bold rounded-full bg-[#10AEF6] hover:bg-[#0893D3] transition-colors duration-300"
+                      style={{ width: "80px", height: "40px" }}
+                    >
+                      Rate
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
