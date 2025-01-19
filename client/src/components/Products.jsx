@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDropzone } from "react-dropzone";
 import services from "../services";
 import { useCart } from "../context/CartContext";
 
@@ -33,6 +34,27 @@ const Products = ({ userRole }) => {
     fetchProducts();
     fetchCategories();
   }, []);
+
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const token = localStorage.getItem("accessToken");
+    const file = acceptedFiles[0];
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+        await services.initProducts(data, token);
+        const updatedProducts = await services.getProducts();
+        setProducts(updatedProducts);
+      } catch (error) {
+        console.error("Error initializing products:", error);
+      }
+    };
+
+    reader.readAsText(file);
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const filteredProducts = products.filter((product) => {
     const matchesName = product.name
@@ -87,6 +109,17 @@ const Products = ({ userRole }) => {
           >
             Add New Product
           </button>
+        </div>
+      )}
+      {userRole === "EMPLOYEE" && products.length === 0 && (
+        <div className="mb-6">
+          <div
+            {...getRootProps()}
+            className="border-dashed border-2 border-gray-300 p-4 mt-4 text-center"
+          >
+            <input {...getInputProps()} />
+            <p>Drag & drop a JSON file here, or click to select a file</p>
+          </div>
         </div>
       )}
       <div className="overflow-x-auto">

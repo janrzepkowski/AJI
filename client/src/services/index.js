@@ -129,6 +129,16 @@ const getStatuses = async () => {
   return response.data;
 };
 
+const initProducts = async (data, token) => {
+  const response = await axios.post(`${baseUrl}/init`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+  return response.data;
+};
+
 export default {
   login,
   signup,
@@ -147,4 +157,5 @@ export default {
   deleteProduct,
   getCategories,
   getStatuses,
+  initProducts,
 };
