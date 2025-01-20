@@ -12,6 +12,8 @@ const AddProduct = ({ userRole }) => {
     unit_weight: "",
     category_id: "",
   });
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -41,6 +43,8 @@ const AddProduct = ({ userRole }) => {
 
   const handleSave = async () => {
     const token = localStorage.getItem("accessToken");
+    setError("");
+    setSuccessMessage("");
     try {
       const productData = {
         name: newProduct.name,
@@ -51,9 +55,12 @@ const AddProduct = ({ userRole }) => {
       };
       console.log("Sending POST request with data:", productData);
       await services.createProduct(productData, token);
-      navigate("/products");
+      setSuccessMessage("Product added successfully!");
+      setTimeout(() => {
+        navigate("/products");
+      }, 2000);
     } catch (error) {
-      console.error("Error creating product:", error);
+      setError(error.response?.data?.error || error.message);
     }
   };
 
@@ -73,6 +80,7 @@ const AddProduct = ({ userRole }) => {
             value={newProduct.name}
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
         </div>
         <div className="mb-4">
@@ -83,6 +91,7 @@ const AddProduct = ({ userRole }) => {
             value={newProduct.description}
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
         </div>
         <div className="mb-4">
@@ -93,6 +102,8 @@ const AddProduct = ({ userRole }) => {
             value={newProduct.unit_price}
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded"
+            min="0.01"
+            required
           />
         </div>
         <div className="mb-4">
@@ -101,9 +112,10 @@ const AddProduct = ({ userRole }) => {
             type="number"
             name="unit_weight"
             value={newProduct.unit_weight}
-            min = "0"
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded"
+            min="0.01"
+            required
           />
         </div>
         <div className="mb-4">
@@ -113,7 +125,11 @@ const AddProduct = ({ userRole }) => {
             value={newProduct.category_id || ""}
             onChange={handleCategoryChange}
             className="w-full p-2 border border-gray-300 rounded"
+            required
           >
+            <option value="" disabled>
+              Select a category
+            </option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -121,6 +137,10 @@ const AddProduct = ({ userRole }) => {
             ))}
           </select>
         </div>
+        {error && <div className="mb-4 text-red-500">{error}</div>}
+        {successMessage && (
+          <div className="mb-4 text-green-500">{successMessage}</div>
+        )}
         <div className="flex justify-end items-center mb-6">
           <div className="flex space-x-2">
             <button

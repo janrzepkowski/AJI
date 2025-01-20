@@ -131,6 +131,7 @@ const UpdateProduct = ({ userRole }) => {
             value={editProduct.unit_price}
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded"
+            min="0"
           />
         </div>
         <div className="mb-4">
@@ -139,7 +140,7 @@ const UpdateProduct = ({ userRole }) => {
             type="number"
             name="unit_weight"
             value={editProduct.unit_weight}
-            min = "0"
+            min="0.01"
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded"
           />

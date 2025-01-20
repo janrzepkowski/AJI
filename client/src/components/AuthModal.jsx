@@ -7,9 +7,12 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
   const [signupUsername, setSignupUsername] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [signupRole, setSignupRole] = useState("CLIENT");
+  const [loginError, setLoginError] = useState("");
+  const [signupError, setSignupError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoginError("");
     try {
       const data = await authService.login({
         username: loginUsername,
@@ -22,15 +25,13 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       onLogin(data.accessToken, data.role, loginUsername);
       onClose();
     } catch (error) {
-      console.error(
-        "Login error:",
-        error.response?.data?.error || error.message
-      );
+      setLoginError(error.response?.data?.error || error.message);
     }
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setSignupError("");
     try {
       const data = await authService.signup({
         username: signupUsername,
@@ -44,10 +45,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       onLogin(data.accessToken, data.role, signupUsername);
       onClose();
     } catch (error) {
-      console.error(
-        "Signup error:",
-        error.response?.data?.error || error.message
-      );
+      setSignupError(error.response?.data?.error || error.message);
     }
   };
 
@@ -85,6 +83,9 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
                 required
               />
             </div>
+            {loginError && (
+              <div className="mb-4 text-red-500">{loginError}</div>
+            )}
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -130,6 +131,9 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
                 <option value="EMPLOYEE">Employee</option>
               </select>
             </div>
+            {signupError && (
+              <div className="mb-4 text-red-500">{signupError}</div>
+            )}
             <div className="flex justify-end">
               <button
                 type="submit"

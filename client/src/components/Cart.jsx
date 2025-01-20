@@ -64,6 +64,7 @@ const Cart = ({ onClose, onLogin }) => {
                     <input
                       type="number"
                       value={item.quantity}
+                      min="1"
                       onChange={(e) =>
                         updateCart(item.id, parseInt(e.target.value))
                       }
