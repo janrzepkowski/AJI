@@ -30,7 +30,7 @@ mongoose
 const app = express();
 
 const corsOptions = {
-  origin: "https://bike-nation-janr.netlify.app/",
+  origin: "https://bike-nation-janr.netlify.app",
   credentials: true,
 };
 app.use(cors(corsOptions));
