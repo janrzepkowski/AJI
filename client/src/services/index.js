@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:3001/api";
+const baseUrl = "https://aji-24kf.onrender.com/api";
 
 const login = async (credentials) => {
   const response = await axios.post(`${baseUrl}/login`, credentials, {
